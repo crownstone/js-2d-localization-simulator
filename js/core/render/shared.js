@@ -36,6 +36,7 @@ function drawTextOnGrid(text, xInMeters, yInMeters, xPxOffset = 0, yPxOffset = 0
   ctx.font = size + "px Arial";
   ctx.textAlign = align;
   ctx.fillStyle = color;
+  ctx.textBaseline = 'middle';
   ctx.fillText(text,
     pixelsPadding + wPaddingCmPx + xInMeters*meterInPx - xPxOffset,
     pixelsPadding + hPaddingCmPx + yInMeters*meterInPx - yPxOffset

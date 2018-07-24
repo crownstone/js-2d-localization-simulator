@@ -6,7 +6,17 @@
  * @returns Object      { room-1: [0..1], room-2: [0..1], ... , NO_ROOM: [0..1] }
  */
 function evaluateProbabilities( rssiJson ) {
-  console.log('rssiJson',rssiJson);
+  // return {
+  //   "room-1" : Math.random(),
+  //   "room-2" : Math.random(),
+  //   "room-3" : Math.random(),
+  //   "room-4" : Math.random(),
+  //   "room-5" : Math.random(),
+  //   "room-6" : Math.random(),
+  //   "room-7" : Math.random(),
+  //   "NO_ROOM": 0.1
+  // }
+  return naiveBayesianClassifier.classify(rssiJson);
 }
 
 
@@ -15,7 +25,8 @@ function evaluateProbabilities( rssiJson ) {
  * @param trainingData  {room-1: { crownstone-1: [-42,-53,-53, ....], crownstone-2: [-42,-53,-53, .... ]}, room-2: ....}
  */
 function processTrainingData(trainingData) {
-  console.log('trainingData',trainingData);
+  // console.log('trainingData',trainingData);
+  naiveBayesianClassifier.summarizeFingerprints(trainingData);
 }
 
 
@@ -24,5 +35,7 @@ function processTrainingData(trainingData) {
  * When this is called, you make sure that your algorithms are cleaned up and ready for a new processTrainingData call
  */
 function clearStoredModels() {
-
+  naiveBayesianClassifier.clear();
 }
+
+let naiveBayesianClassifier = new NaiveBayesian();

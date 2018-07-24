@@ -39,6 +39,11 @@ function hsv2rgb(h, s, v) {
 }
 
 
+function hex2rgba(hex,a) {
+  let rgb = hex2rgb(hex);
+  return 'rgba('+rgb.r+","+rgb.g+"," +rgb.b+","+a+")"
+}
+
 /**
  * http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
  *

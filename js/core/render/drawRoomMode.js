@@ -96,11 +96,14 @@ function drawWalls(activeWallSet, roomId, index) {
 
     drawLineOnGrid(lastCorner.x, lastCorner.y, activeWallSet.corners[0].x, activeWallSet.corners[0].y, 3, color);
 
-    sumX /= activeWallSet.corners.length;
-    sumY /= activeWallSet.corners.length;
+    sumX += activeWallSet.corners[0].x;
+    sumY += activeWallSet.corners[0].y;
+
+    sumX /= (activeWallSet.corners.length+1);
+    sumY /= (activeWallSet.corners.length+1);
 
     ctx.fillStyle = '#000';
-    drawTextOnGrid(roomId, sumX, sumY, 0, 0, 40)
+    drawTextOnGrid(roomId, sumX, sumY, 0, 0, 40, 'center')
 
 
 

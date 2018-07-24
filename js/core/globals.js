@@ -1,4 +1,4 @@
-let N_VALUE = 2.5;
+let N_VALUE = 3.0;
 let CALIBRATION_VALUE = -60;
 
 let OPERATION_MODE = 'DRAW_ROOMS';
@@ -6,6 +6,7 @@ let OPERATION_MODE = 'DRAW_ROOMS';
 let BLOCK_SIZE = 20; // px
 
 let SELECTED_ROOM_ID = null
+let SELECTED_STONE_ID = null
 
 let eventBus = new EventBusClass()
 

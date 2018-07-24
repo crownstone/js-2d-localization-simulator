@@ -1,6 +1,6 @@
 
 
-function initVisualizeLocationHandler() {
+function initVisualizeLocationProbabilityHandler() {
   generateFingerprints();
 
   clearStoredModels()

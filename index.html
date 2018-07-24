@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Localization Simulation</title>
+    <script src="js/experimentAPI/algorithms/naiveBayesian/classifier.js"></script>
     <script src="js/experimentAPI/methods.js"></script>
     <script src="js/core/util/keyCharm.js"></script>
     <script src="js/core/util/EventBus.js"></script>
     <script src="js/core/globals.js"></script>
     <script src="js/core/util/util.js"></script>
+    <script src="js/core/util/colors.js"></script>
     <script src="js/core/libs/vis.js"></script>
     <script src="js/core/core.js"></script>
     <script src="js/core/render/shared.js"></script>
@@ -15,10 +17,14 @@
     <script src="js/core/render/placeCrownstoneMode.js"></script>
     <script src="js/core/render/placeTrainingDataMode.js"></script>
     <script src="js/core/render/visualizeLocationDistribution.js"></script>
+    <script src="js/core/render/visualizeLocationProbability.js"></script>
+    <script src="js/core/render/showRssiToCrownstone.js"></script>
     <script src="js/core/modeHandlers/drawRoomModeHandler.js"></script>
     <script src="js/core/modeHandlers/placeCrownstoneModeHandler.js"></script>
     <script src="js/core/modeHandlers/placeTrainingDataHandler.js"></script>
     <script src="js/core/modeHandlers/visualizeLocationDistributionHandler.js"></script>
+    <script src="js/core/modeHandlers/visualizeLocationProbabilityHandler.js"></script>
+    <script src="js/core/modeHandlers/showRssiToCrownstoneHandler.js"></script>
     <script src="js/core/domElements/clickHandlers.js"></script>
     <script src="js/core/domElements/buttonHandlers.js"></script>
 </head>
@@ -30,10 +36,17 @@
     <button onclick="setMode('PLACE_TRAINING_POINTS')" type="button">Place training points</button>
     <button onclick="setMode('VISUALIZE_LOCALIZATION_DISTRIBUTION')" type="button">Visualize localization distribution</button>
     <button onclick="setMode('VISUALIZE_LOCALIZATION_PROBABILITY')" type="button">Visualize localization probability</button>
+    <button onclick="setMode('SHOW_RSSI_TO_CROWNSTONE')" type="button">Show RSSI to Crownstone</button>
 </div>
 <div id="roomSelectDiv" style="display:none">
     <span>Select a Room</span>
     <select id="roomSelect" onchange="changeSelectedRoom()">
+        <option>test</option>
+    </select>
+</div>
+<div id="stoneSelectDiv" style="display:none">
+    <span>Select a Crownstone</span>
+    <select id="stoneSelect" onchange="changeSelectedStone()">
         <option>test</option>
     </select>
 </div>

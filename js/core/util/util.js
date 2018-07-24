@@ -9,28 +9,18 @@ function getRSSI(distance) {
   return rssi;
 }
 
-function getMean(measurements,stone) {
+function getMean(measurements) {
   var total = 0;
   measurements.forEach((element) => {
-    if (useDistance) {
-      total += getDistanceFromRssi(element,stone);
-    }
-    else {
-      total += element;
-    }
+    total += element;
   })
   return (total / measurements.length)
 }
 
-function getStd(measurements, mean,stone) {
+function getStd(measurements, mean) {
   var total = 0;
   measurements.forEach((element) => {
-    if (useDistance) {
-      total += Math.pow(getDistanceFromRssi(element,stone) - mean,2);
-    }
-    else {
-      total += Math.pow(element - mean,2);
-    }
+    total += Math.pow(element - mean,2);
   });
   var variance = (total / measurements.length);
   return Math.sqrt(variance);

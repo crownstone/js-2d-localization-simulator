@@ -1,5 +1,7 @@
 
 let operationModeSelectDiv = null;
+let stoneSelectDiv = null;
+let stoneSelect = null;
 let roomSelectDiv = null;
 let roomSelect = null;
 let backButton = null;
@@ -9,14 +11,16 @@ let unsubscribeEvents = [];
 
 function bindElements() {
   canvas = document.getElementById("canvasContainer");
-  canvas.addEventListener("click", canvasClick, false);;
+  canvas.addEventListener("click", canvasClick, false);
   ctx = canvas.getContext("2d");
 
   operationModeSelectDiv = document.getElementById("operationModeSelectDiv");
-  roomSelectDiv = document.getElementById("roomSelectDiv");
-  roomSelect = document.getElementById("roomSelect");
-  backButton = document.getElementById("backButton");
-  printButton = document.getElementById("printButton");
+  roomSelectDiv  = document.getElementById("roomSelectDiv");
+  roomSelect     = document.getElementById("roomSelect");
+  stoneSelectDiv = document.getElementById("stoneSelectDiv");
+  stoneSelect    = document.getElementById("stoneSelect");
+  backButton     = document.getElementById("backButton");
+  printButton    = document.getElementById("printButton");
 }
 function setMode(mode) {
   // reset all listeners
@@ -27,6 +31,7 @@ function setMode(mode) {
     operationModeSelectDiv.style.display = "block"
     backButton.style.display = "none"
     roomSelectDiv.style.display = "none"
+    stoneSelectDiv.style.display = "none"
     printButton.style.display = "none"
   }
   else {
@@ -37,6 +42,8 @@ function setMode(mode) {
       case "PLACE_TRAINING_POINTS":
       case "VISUALIZE_LOCALIZATION_PROBABILITY":
         roomSelectDiv.style.display = 'block'; break;
+      case "SHOW_RSSI_TO_CROWNSTONE":
+        stoneSelectDiv.style.display = "block"; break;
     }
     switch (OPERATION_MODE) {
       case "DRAW_ROOMS":
@@ -61,6 +68,10 @@ function setMode(mode) {
         initVisualizeLocationHandler();
         break
       case "VISUALIZE_LOCALIZATION_PROBABILITY":
+        initVisualizeLocationProbabilityHandler();
+        break
+      case "SHOW_RSSI_TO_CROWNSTONE":
+        initRSSItoCrownstonesHandler();
         break
       default:
 
@@ -91,7 +102,27 @@ function populateRoomSelect() {
 
 }
 
+function populateStoneSelect() {
+  if (CROWNSTONES.length > 0) {
+    while (stoneSelect.firstChild) {
+      stoneSelect.removeChild(stoneSelect.firstChild);
+    }
+    CROWNSTONES.forEach((stone) => {
+      var option = document.createElement("option");
+      option.text = stone.id;
+      stoneSelect.add(option);
+    });
+
+    SELECTED_STONE_ID = CROWNSTONES[0].id;
+  }
+}
+
 function changeSelectedRoom() {
   SELECTED_ROOM_ID = roomSelect.options[roomSelect.selectedIndex].innerHTML;
+  render();
+}
+
+function changeSelectedStone() {
+  SELECTED_STONE_ID = stoneSelect.options[stoneSelect.selectedIndex].innerHTML;
   render();
 }

@@ -19,6 +19,7 @@ function coreInit() {
       }
       else {
         populateRoomSelect()
+        populateStoneSelect()
       }
     })
     .then(() => {
@@ -78,9 +79,12 @@ function render() {
       renderVisualizeLocationDistribution();
       break
     case "VISUALIZE_LOCALIZATION_PROBABILITY":
+      renderVisualizeLocationProbabilityDistribution();
+      break
+    case "SHOW_RSSI_TO_CROWNSTONE":
+      renderRSSItoCrownstones();
       break
     default:
-
       break
   }
 
