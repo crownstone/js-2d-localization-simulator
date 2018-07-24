@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Localization Simulation</title>
+    <script src="js/experimentAPI/methods.js"></script>
+    <script src="js/core/util/keyCharm.js"></script>
+    <script src="js/core/util/EventBus.js"></script>
+    <script src="js/core/globals.js"></script>
+    <script src="js/core/util/util.js"></script>
+    <script src="js/core/libs/vis.js"></script>
+    <script src="js/core/core.js"></script>
+    <script src="js/core/render/shared.js"></script>
+    <script src="js/core/render/drawRoomMode.js"></script>
+    <script src="js/core/render/placeCrownstoneMode.js"></script>
+    <script src="js/core/render/placeTrainingDataMode.js"></script>
+    <script src="js/core/render/visualizeLocationDistribution.js"></script>
+    <script src="js/core/modeHandlers/drawRoomModeHandler.js"></script>
+    <script src="js/core/modeHandlers/placeCrownstoneModeHandler.js"></script>
+    <script src="js/core/modeHandlers/placeTrainingDataHandler.js"></script>
+    <script src="js/core/modeHandlers/visualizeLocationDistributionHandler.js"></script>
+    <script src="js/core/domElements/clickHandlers.js"></script>
+    <script src="js/core/domElements/buttonHandlers.js"></script>
+</head>
+<body onLoad="coreInit()">
+<div id="operationModeSelectDiv">
+    <span>Select an operation mode:</span>
+    <button onclick="setMode('DRAW_ROOMS')" type="button">Draw Rooms</button>
+    <button onclick="setMode('PLACE_CROWNSTONES')" type="button">Place Crownstones</button>
+    <button onclick="setMode('PLACE_TRAINING_POINTS')" type="button">Place training points</button>
+    <button onclick="setMode('VISUALIZE_LOCALIZATION_DISTRIBUTION')" type="button">Visualize localization distribution</button>
+    <button onclick="setMode('VISUALIZE_LOCALIZATION_PROBABILITY')" type="button">Visualize localization probability</button>
+</div>
+<div id="roomSelectDiv" style="display:none">
+    <span>Select a Room</span>
+    <select id="roomSelect" onchange="changeSelectedRoom()">
+        <option>test</option>
+    </select>
+</div>
+<button id="printButton" onclick="printResultsToConsole()" type="button" style="display:none">Print results to console</button>
+<button id="backButton" onclick="setMode(null)" type="button" style="display:none">Back</button>
+<canvas height="1200" width="1600" id="canvasContainer" style="float:left;"></canvas>
+</body>
+</html>
