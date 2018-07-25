@@ -1,5 +1,10 @@
 
 
+function initRSSItoCrownstonesHandler() {
+
+}
+
+
 function renderRSSItoCrownstones() {
   evalValues();
 
