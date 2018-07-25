@@ -100,6 +100,18 @@ function pixelsToMeters(x,y, snap = true) {
   return {x,y}
 }
 
+function metersToPixels(x,y) {
+  x *= METERS_IN_PIXELS;
+  x += pixelsPadding;
+  x += wPaddingCmPx;
+
+  y *= METERS_IN_PIXELS;
+  y += pixelsPadding;
+  y += hPaddingCmPx;
+
+  return {x,y}
+}
+
 
 
 function getRssiFromStonesToPoint(x,y) {

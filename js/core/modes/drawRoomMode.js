@@ -17,6 +17,13 @@ function initDrawRoomModeHandler() {
   unsubscribeEvents.push(eventBus.on("CanvasClick", (point) => {
     let {x , y} = pixelsToMeters(point.x, point.y);
 
+    let roomIds = Object.keys(ROOMS);
+    roomIds.forEach((roomId, index) => {
+      if (castRay(point.x, point.y, ROOMS[roomId])) {
+        console.log('clicked on room', roomId)
+      }
+    })
+
     let activeWallSet = ROOMS[SELECTED_ROOM_ID];
 
     if (activeWallSet.corners === undefined || activeWallSet.corners.length === 0) {
@@ -32,7 +39,6 @@ function initDrawRoomModeHandler() {
     console.log(JSON.stringify(ROOMS, undefined, 2))
   }))
 }
-
 
 
 function renderDrawRoom() {
