@@ -5,7 +5,8 @@
     "position": {
       "x": 0,
       "y": 0
-    }
+    },
+    "angle": 0
   },
   {
     "id": "crownstone-2",
@@ -21,7 +22,8 @@
       "x": 10,
       "y": 0.5
     },
-    "color": "#00263e"
+    "color": "#00263e",
+    "angle": 90
   },
   {
     "id": "crownstone-4",
@@ -45,7 +47,8 @@
       "x": 6.75,
       "y": 6
     },
-    "color": "#0075c9"
+    "color": "#0075c9",
+    "angle": 180
   },
   {
     "id": "crownstone-7",
@@ -93,7 +96,8 @@
       "x": 16,
       "y": 9
     },
-    "color": "#ff953a"
+    "color": "#ff953a",
+    "angle": 180
   },
   {
     "id": "crownstone-13",
@@ -117,7 +121,8 @@
       "x": 17,
       "y": 3
     },
-    "color": "#e00"
+    "color": "#e00",
+    "angle": 90
   },
   {
     "id": "crownstone-16",
@@ -133,7 +138,8 @@
       "x": 17,
       "y": 5
     },
-    "color": "#a9d0f1"
+    "color": "#a9d0f1",
+    "angle": 90
   },
   {
     "id": "crownstone-18",

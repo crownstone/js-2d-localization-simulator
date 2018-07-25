@@ -120,8 +120,15 @@ function getRssiFromStoneToPoint(stone, x, y, ignoreThreshold = false) {
   let distance = Math.sqrt(dx*dx + dy*dy);
 
   if (ATTENUATION > 0) {
+    let stoneAngle = 0;
+    if (stone.angle) {
+      stoneAngle = stone.angle;
+    }
+
+    let usedAngle = Math.PI - ((stoneAngle/360)*(2*Math.PI))
+
     let angle = Math.atan2(dx,dy);
-    let factor = Math.abs(Math.sin(angle));
+    let factor = Math.abs(Math.sin(angle - usedAngle));
     // console.log("FACTOR", (ATTENUATION_FACTOR + (1-ATTENUATION_FACTOR) + ATTENUATION_FACTOR*(Math.pow(factor,ATTENUATION))))
     distance *= (Number(ATTENUATION_FACTOR) + (1-ATTENUATION_FACTOR) + ATTENUATION_FACTOR*(Math.pow(factor,ATTENUATION)));
   }
