@@ -6,16 +6,6 @@
  * @returns Object      { room-1: [0..1], room-2: [0..1], ... , NO_ROOM: [0..1] }
  */
 function evaluateProbabilities( rssiJson ) {
-  // return {
-  //   "room-1" : Math.random(),
-  //   "room-2" : Math.random(),
-  //   "room-3" : Math.random(),
-  //   "room-4" : Math.random(),
-  //   "room-5" : Math.random(),
-  //   "room-6" : Math.random(),
-  //   "room-7" : Math.random(),
-  //   "NO_ROOM": 0.1
-  // }
   return naiveBayesianClassifier.classify(rssiJson);
 }
 

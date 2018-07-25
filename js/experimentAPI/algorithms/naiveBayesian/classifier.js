@@ -6,7 +6,7 @@ class NaiveBayesian {
     this.distance = false;
     if (type === 'distance') {
       this.distance = true;
-      this.MINIMUM_STD = 0.5;
+      this.MINIMUM_STD = 0.1;
     }
     else {
       this.MINIMUM_STD = 3;

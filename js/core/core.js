@@ -101,8 +101,8 @@ function render() {
   }
 
 
-  // if (vis3dDataset.getIds().length > 0) {
-  //   visInit3d();
-  // }
+  if (vis3dDataset.getIds().length > 0) {
+    visInit3d();
+  }
 
 }
