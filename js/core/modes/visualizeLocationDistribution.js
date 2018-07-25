@@ -101,19 +101,3 @@ function drawDistribution() {
   // update 3d graph.
   vis3dDataset.update(data);
 }
-
-function getRssiFromStonesToPoint(x,y) {
-  let result = {};
-  for (let i = 0; i < CROWNSTONES.length; i++) {
-    let dx = x - CROWNSTONES[i].position.x;
-    let dy = y - CROWNSTONES[i].position.y;
-    let distance = Math.sqrt(dx*dx + dy*dy);
-    let rssi = getRSSI(distance);
-    if (rssi > RSSI_THRESHOLD) {
-      result[CROWNSTONES[i].id] = rssi;
-    }
-  }
-
-  return result;
-}
-

@@ -6,6 +6,9 @@ let roomSelectDiv = null;
 let roomSelect = null;
 let backButton = null;
 let printButton = null;
+let attenuationControl = null;
+let attenuationRange = null;
+let attenuationFactorRange = null;
 
 let unsubscribeEvents = [];
 
@@ -21,6 +24,9 @@ function bindElements() {
   stoneSelect    = document.getElementById("stoneSelect");
   backButton     = document.getElementById("backButton");
   printButton    = document.getElementById("printButton");
+  attenuationControl  = document.getElementById("attenuationControl");
+  attenuationRange  = document.getElementById("attenuationRange");
+  attenuationFactorRange  = document.getElementById("attenuationFactorRange");
 }
 function setMode(mode) {
   // reset all listeners
@@ -34,6 +40,7 @@ function setMode(mode) {
     roomSelectDiv.style.display = "none"
     stoneSelectDiv.style.display = "none"
     printButton.style.display = "none"
+    attenuationControl.style.display = "none"
   }
   else {
     operationModeSelectDiv.style.display = "none"
@@ -51,6 +58,13 @@ function setMode(mode) {
       case "PLACE_CROWNSTONES":
       case "PLACE_TRAINING_POINTS":
         printButton.style.display = 'block'; break;
+    }
+
+    switch (OPERATION_MODE) {
+      case "VISUALIZE_LOCALIZATION_DISTRIBUTION":
+      case "VISUALIZE_LOCALIZATION_PROBABILITY":
+      case "SHOW_RSSI_TO_CROWNSTONE":
+        attenuationControl.style.display = 'block'; break;
     }
 
     backButton.style.display = "block"
@@ -116,6 +130,13 @@ function populateStoneSelect() {
     SELECTED_STONE_ID = CROWNSTONES[0].id;
   }
 }
+function setAttenuation() {
+  attenuationRange.value = ATTENUATION;
+  document.getElementById('attenuationValue').innerHTML = ATTENUATION;
+
+  attenuationFactorRange.value = ATTENUATION_FACTOR;
+  document.getElementById('attenuationFactorValue').innerHTML = ATTENUATION_FACTOR;
+}
 
 function changeSelectedRoom() {
   SELECTED_ROOM_ID = roomSelect.options[roomSelect.selectedIndex].innerHTML;
@@ -124,5 +145,17 @@ function changeSelectedRoom() {
 
 function changeSelectedStone() {
   SELECTED_STONE_ID = stoneSelect.options[stoneSelect.selectedIndex].innerHTML;
+  render();
+}
+
+function changeAttenuation() {
+  ATTENUATION = attenuationRange.value
+  document.getElementById('attenuationValue').innerHTML = ATTENUATION;
+  render();
+}
+
+function changeAttenuationFactor() {
+  ATTENUATION_FACTOR = attenuationFactorRange.value
+  document.getElementById('attenuationFactorValue').innerHTML = ATTENUATION_FACTOR;
   render();
 }

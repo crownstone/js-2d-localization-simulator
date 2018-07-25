@@ -9,25 +9,24 @@ function initRSSItoCrownstonesHandler() {
       let mRadius = 15 / METERS_IN_PIXELS;
       if (x >= p.x - mRadius && x <= p.x + mRadius && y >= p.y - mRadius && y < p.y + mRadius) {
         SELECTED_STONE_ID = crownstone.id;
-
-        let selectedStoneIndex = 0;
-        for (let i = 0; i < CROWNSTONES.length; i++) {
-          if (SELECTED_STONE_ID == CROWNSTONES[i].id) {
-            selectedStoneIndex = i;
-            break;
-          }
-        }
-
-        stoneSelect.selectedIndex = selectedStoneIndex;
-
+        setStoneSelectionToStoneId(SELECTED_STONE_ID)
       }
     })
     render();
   }))
 }
 
-function setStoneSelectionToStoneId(stoneId) {
 
+function setStoneSelectionToStoneId(stoneId) {
+  let selectedStoneIndex = 0;
+  for (let i = 0; i < CROWNSTONES.length; i++) {
+    if (stoneId == CROWNSTONES[i].id) {
+      selectedStoneIndex = i;
+      break;
+    }
+  }
+
+  stoneSelect.selectedIndex = selectedStoneIndex;
 }
 
 
@@ -50,10 +49,10 @@ function drawRssiToCrownstone() {
   vis3dDataset.clear();
   let data = [];
 
-  let selectedCrownstonePosition = {};
+  let selectedCrownstone = null;
   CROWNSTONES.forEach((stone) => {
     if (SELECTED_STONE_ID == stone.id) {
-      selectedCrownstonePosition = stone.position;
+      selectedCrownstone = stone;
     }
   })
 
@@ -66,10 +65,8 @@ function drawRssiToCrownstone() {
 
       let {x, y} = pixelsToMeters(xPx, yPx, false);
 
-      let dx = x - selectedCrownstonePosition.x;
-      let dy = y - selectedCrownstonePosition.y;
-      let distance = Math.sqrt(dx*dx + dy*dy);
-      let rssi = getRSSI(distance);
+      let rssi = getRssiFromStoneToPoint(selectedCrownstone, x, y, true)
+
 
       if (rssi > -40) {
         rssi = -40;
@@ -90,10 +87,7 @@ function drawRssiToCrownstone() {
 
       let {x, y} = pixelsToMeters(xPx, yPx, false);
 
-      let dx = x - selectedCrownstonePosition.x;
-      let dy = y - selectedCrownstonePosition.y;
-      let distance = Math.sqrt(dx*dx + dy*dy);
-      let rssi = getRSSI(distance);
+      let rssi = getRssiFromStoneToPoint(selectedCrownstone, x, y, true);
 
       let graph3d_rawFactor = (rssi - lowest) / range;
       let graph3d_factor = Math.min(1,Math.max(0,graph3d_rawFactor));
@@ -110,7 +104,6 @@ function drawRssiToCrownstone() {
 
       }
       else {
-
         data.push({
           x: i * BLOCK_SIZE + 0.5 * BLOCK_SIZE,
           y: -j * BLOCK_SIZE + 0.5 * BLOCK_SIZE,

@@ -19,6 +19,7 @@ function coreInit() {
       else {
         populateRoomSelect()
         populateStoneSelect()
+        setAttenuation()
       }
     })
     .then(() => {
@@ -51,9 +52,11 @@ function loadConfig() {
       .then((data) => {
         let settings = JSON.parse(data);
 
-        N_VALUE = settings.math.nValue;
-        CALIBRATION_VALUE = settings.math.calibrationValueAt1Meter;
-        RSSI_THRESHOLD = settings.math.rssiThreshold;
+        ATTENUATION = settings.system.attenuation;
+        ATTENUATION_FACTOR = settings.system.attenuationFactor;
+        N_VALUE = settings.system.nValue;
+        CALIBRATION_VALUE = settings.system.calibrationValueAt1Meter;
+        RSSI_THRESHOLD = settings.system.rssiThreshold;
         COLOR_BANDS = settings.canvas.colorBands;
         BLOCK_SIZE = settings.canvas.blockSizeInPixels; // px
         METERS_IN_PIXELS = settings.canvas.meterToPixels;
@@ -98,8 +101,8 @@ function render() {
   }
 
 
-  if (vis3dDataset.getIds().length > 0) {
-    visInit3d();
-  }
+  // if (vis3dDataset.getIds().length > 0) {
+  //   visInit3d();
+  // }
 
 }

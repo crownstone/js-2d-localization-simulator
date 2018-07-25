@@ -99,3 +99,35 @@ function pixelsToMeters(x,y, snap = true) {
 
   return {x,y}
 }
+
+
+
+function getRssiFromStonesToPoint(x,y) {
+  let result = {};
+  for (let i = 0; i < CROWNSTONES.length; i++) {
+    let rssi = getRssiFromStoneToPoint(CROWNSTONES[i], x, y);
+    if (rssi !== null) {
+      result[CROWNSTONES[i].id] = rssi;
+    }
+  }
+
+  return result;
+}
+
+function getRssiFromStoneToPoint(stone, x, y, ignoreThreshold = false) {
+  let dx = x - stone.position.x;
+  let dy = y - stone.position.y;
+  let distance = Math.sqrt(dx*dx + dy*dy);
+
+  if (ATTENUATION > 0) {
+    let angle = Math.atan2(dx,dy);
+    let factor = Math.abs(Math.sin(angle));
+    // console.log("FACTOR", (ATTENUATION_FACTOR + (1-ATTENUATION_FACTOR) + ATTENUATION_FACTOR*(Math.pow(factor,ATTENUATION))))
+    distance *= (Number(ATTENUATION_FACTOR) + (1-ATTENUATION_FACTOR) + ATTENUATION_FACTOR*(Math.pow(factor,ATTENUATION)));
+  }
+  let rssi = getRSSI(distance);
+  if (rssi > RSSI_THRESHOLD || ignoreThreshold === true) {
+    return rssi;
+  }
+  return null;
+}

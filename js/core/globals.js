@@ -1,5 +1,7 @@
 
 /** CHANGE THESE VALUES IN CONFIG.JSON **/
+    let ATTENUATION_FACTOR = 0;
+    let ATTENUATION = 3;
     let N_VALUE = 4.0;
     let CALIBRATION_VALUE = -55;
     let RSSI_THRESHOLD = -95;

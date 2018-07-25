@@ -6,6 +6,10 @@ class NaiveBayesian {
     this.distance = false;
     if (type === 'distance') {
       this.distance = true;
+      this.MINIMUM_STD = 0.5;
+    }
+    else {
+      this.MINIMUM_STD = 3;
     }
 
     this.fingerprints = {};
@@ -26,8 +30,8 @@ class NaiveBayesian {
         let std = getStd(this._processValue(fingerprints[roomId][stoneId]), mean)
 
         // do not allow small standard deviations
-        if (std < 3) {
-          std = 3;
+        if (std < this.MINIMUM_STD) {
+          std = this.MINIMUM_STD;
         }
         this.fingerprints[roomId][stoneId] = {mean: mean, std: std};
       })

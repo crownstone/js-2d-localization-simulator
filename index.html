@@ -45,6 +45,10 @@
         <option>test</option>
     </select>
 </div>
+<div id="attenuationControl" style="display:none">
+    Attenuation: <input type="range" id="attenuationRange" onchange="changeAttenuation()" min="0" max="20" value="0" step="1" style="width:300px" /><span id="attenuationValue"></span>
+    </br>Attenuation Factor: <input type="range" id="attenuationFactorRange" onchange="changeAttenuationFactor()" min="0" max="1" value="0" step="0.05" style="width:300px" /><span id="attenuationFactorValue"></span>
+</div>
 <button id="printButton" onclick="printResultsToConsole()" type="button" style="display:none">Print results to console</button>
 <button id="backButton" onclick="setMode(null)" type="button" style="display:none">Back</button>
 <canvas height="1200" width="1600" id="canvasContainer" style="float:left;"></canvas>
