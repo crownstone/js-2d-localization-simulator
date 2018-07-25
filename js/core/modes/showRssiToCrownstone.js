@@ -19,6 +19,7 @@ function initRSSItoCrownstonesHandler() {
         }
 
         stoneSelect.selectedIndex = selectedStoneIndex;
+
       }
     })
     render();
@@ -45,6 +46,9 @@ function renderRSSItoCrownstones() {
 function drawRssiToCrownstone() {
   let xblockCount = Math.ceil(canvas.width / BLOCK_SIZE);
   let yblockCount = Math.ceil(canvas.height / BLOCK_SIZE);
+
+  vis3dDataset.clear();
+  let data = [];
 
   let selectedCrownstonePosition = {};
   CROWNSTONES.forEach((stone) => {
@@ -91,10 +95,30 @@ function drawRssiToCrownstone() {
       let distance = Math.sqrt(dx*dx + dy*dy);
       let rssi = getRSSI(distance);
 
+      let graph3d_rawFactor = (rssi - lowest) / range;
+      let graph3d_factor = Math.min(1,Math.max(0,graph3d_rawFactor));
+
       if (rssi < RSSI_THRESHOLD) {
         drawSquareOnGrid(x, y, BLOCK_SIZE, "rgba(0,0,0,0.7)");
+
+        data.push({
+          x: i * BLOCK_SIZE + 0.5 * BLOCK_SIZE,
+          y: -j * BLOCK_SIZE + 0.5 * BLOCK_SIZE,
+          z: rssi,
+          style: 0
+        })
+
       }
       else {
+
+        data.push({
+          x: i * BLOCK_SIZE + 0.5 * BLOCK_SIZE,
+          y: -j * BLOCK_SIZE + 0.5 * BLOCK_SIZE,
+          z: rssi,
+          style: graph3d_factor
+        })
+
+
         let rawFactor = (rssi - thresholdedLowest) / range;
         let factor = Math.min(1,Math.max(0,rawFactor));
 
@@ -110,5 +134,8 @@ function drawRssiToCrownstone() {
   }
 
   drawTextOnGrid("minValue:" + Math.round(lowest) + " maxValue:" + Math.round(highest) + " threshold:" + RSSI_THRESHOLD, 0, -1);
+
+  // update 3d graph.
+  vis3dDataset.update(data);
 }
 

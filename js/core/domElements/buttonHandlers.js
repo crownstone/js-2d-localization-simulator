@@ -26,6 +26,7 @@ function setMode(mode) {
   // reset all listeners
   keycharmer.reset()
   unsubscribeEvents.forEach((unsub) => { unsub() });
+  vis3dDataset.clear();
 
   if (mode === null) {
     operationModeSelectDiv.style.display = "block"
@@ -77,7 +78,6 @@ function setMode(mode) {
 
         break
     }
-
 
     render();
   }

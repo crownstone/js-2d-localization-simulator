@@ -18,6 +18,8 @@ function renderVisualizeLocationProbabilityDistribution() {
 function drawProbabilityDistribution() {
   let xblockCount = Math.ceil(canvas.width / BLOCK_SIZE);
   let yblockCount = Math.ceil(canvas.height / BLOCK_SIZE);
+
+  vis3dDataset.clear();
   var data = [];
 
   let lowest = 1e9
@@ -63,6 +65,13 @@ function drawProbabilityDistribution() {
         let rawFactor = (probability - lowest) / range;
         let factor = Math.min(1, Math.max(0, rawFactor));
 
+        data.push({
+          x: i * BLOCK_SIZE + 0.5 * BLOCK_SIZE,
+          y: - j * BLOCK_SIZE + 0.5 * BLOCK_SIZE,
+          z: probability,
+          style: factor
+        })
+
         factor = Math.round(factor * COLOR_BANDS) * 1 / COLOR_BANDS
 
         let rgb = hsv2rgb((1 - factor) * 270, 1, 1);
@@ -70,15 +79,12 @@ function drawProbabilityDistribution() {
         let color = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (factor * (1 - minOpacity) + minOpacity) + ')';
         drawSquareOnGrid(x, y, BLOCK_SIZE, color);
 
-        data.push({
-          x: i * BLOCK_SIZE + 0.5 * BLOCK_SIZE,
-          y: j * BLOCK_SIZE + 0.5 * BLOCK_SIZE,
-          z: probability,
-          style: factor
-        })
 
         drawCustomElement(x,y)
       }
     }
   }
+
+  // update 3d graph.
+  vis3dDataset.update(data);
 }

@@ -74,7 +74,6 @@ function render() {
   // ctx.fillStyle = "red";
   // ctx.fill();
 
-
   switch (OPERATION_MODE) {
     case "DRAW_ROOMS":
       renderDrawRoom();
@@ -96,6 +95,11 @@ function render() {
       break
     default:
       break
+  }
+
+
+  if (vis3dDataset.getIds().length > 0) {
+    visInit3d();
   }
 
 }

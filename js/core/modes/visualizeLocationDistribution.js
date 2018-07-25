@@ -42,7 +42,7 @@ function renderVisualizeLocationDistribution() {
 function drawDistribution() {
   let xblockCount = Math.ceil(canvas.width / BLOCK_SIZE);
   let yblockCount = Math.ceil(canvas.height / BLOCK_SIZE);
-
+  vis3dDataset.clear();
   let data = [];
   for (let i = 0; i < xblockCount; i++) {
     for (let j = 0; j < yblockCount; j++) {
@@ -56,21 +56,31 @@ function drawDistribution() {
       let result = evaluateProbabilities(vector);
 
       let roomsInResult = Object.keys(result);
+      let amountOfRoomsInResult = roomsInResult.length;
       let max = 0;
       let maxId = 0;
-      roomsInResult.forEach((roomId) => {
+      let maxIndex = 0;
+      roomsInResult.forEach((roomId, index) => {
         if (max < result[roomId]) {
           max = result[roomId];
           maxId = roomId;
+          maxIndex = index;
         }
       });
 
-      data.push({x:i*BLOCK_SIZE+0.5*BLOCK_SIZE, y:j*BLOCK_SIZE+0.5*BLOCK_SIZE, z:max, style: 0.5})
-
       if (maxId === "NO_ROOM") {
-        drawSquareOnGrid(x,y, BLOCK_SIZE, 'rgba(0,0,0,0.7)')
+        drawSquareOnGrid(x,y, BLOCK_SIZE, 'rgba(0,0,0,0.9)')
       }
       else {
+
+        data.push({
+          x:i*BLOCK_SIZE+0.5*BLOCK_SIZE,
+          y:-j*BLOCK_SIZE+0.5*BLOCK_SIZE,
+          z:max,
+          style: (1/amountOfRoomsInResult)*maxIndex
+        })
+
+
         if (!ROOMS[maxId]) {
           console.warn("UNKNOWN ROOM", maxId)
           drawSquareOnGrid(x, y, BLOCK_SIZE, 'rgba(255,0,0,1)')
@@ -87,6 +97,9 @@ function drawDistribution() {
       }
     }
   }
+
+  // update 3d graph.
+  vis3dDataset.update(data);
 }
 
 function getRssiFromStonesToPoint(x,y) {

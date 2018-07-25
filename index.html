@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Localization Simulation</title>
+    <script src="js/core/libs/vis.js"></script>
     <script src="js/experimentAPI/algorithms/naiveBayesian/classifier.js"></script>
     <script src="js/experimentAPI/methods.js"></script>
     <script src="js/core/util/keyCharm.js"></script>
@@ -10,8 +11,8 @@
     <script src="js/core/globals.js"></script>
     <script src="js/core/util/util.js"></script>
     <script src="js/core/util/colors.js"></script>
-    <script src="js/core/libs/vis.js"></script>
     <script src="js/core/core.js"></script>
+    <script src="js/core/graph3d.js"></script>
     <script src="js/core/modes/shared.js"></script>
     <script src="js/core/modes/drawRoomMode.js"></script>
     <script src="js/core/modes/placeCrownstoneMode.js"></script>
@@ -47,5 +48,7 @@
 <button id="printButton" onclick="printResultsToConsole()" type="button" style="display:none">Print results to console</button>
 <button id="backButton" onclick="setMode(null)" type="button" style="display:none">Back</button>
 <canvas height="1200" width="1600" id="canvasContainer" style="float:left;"></canvas>
+
+<div id="graph" style="width:1600px;"></div>
 </body>
 </html>

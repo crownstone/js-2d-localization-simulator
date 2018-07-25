@@ -12,7 +12,7 @@ class NaiveBayesian {
     this.sampleSize = {};
 
     this.MINIMUM_REQUIRED_SAMPLES = 3;
-    this.PROBABILITY_MINIMUM = 1e-2;
+    this.PROBABILITY_MINIMUM = 1e-97;
   }
 
   summarizeFingerprints(fingerprints) {

@@ -12,9 +12,10 @@
 
 let OPERATION_MODE = 'DRAW_ROOMS';
 
-
+let vis3dDataset = new vis.DataSet();
 let SELECTED_ROOM_ID = null
 let SELECTED_STONE_ID = null
+let DRAWING = false;
 
 let eventBus = new EventBusClass()
 
