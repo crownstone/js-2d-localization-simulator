@@ -52,6 +52,7 @@ function loadConfig() {
       .then((data) => {
         let settings = JSON.parse(data);
 
+        AUTO_REDRAW_GRAPH3D = settings.gui.autoRedrawGraph3d;
         ATTENUATION = settings.system.attenuation;
         ATTENUATION_FACTOR = settings.system.attenuationFactor;
         N_VALUE = settings.system.nValue;
@@ -100,8 +101,7 @@ function render() {
       break
   }
 
-
-  if (vis3dDataset.getIds().length > 0) {
+  if (AUTO_REDRAW_GRAPH3D) {
     visInit3d();
   }
 
