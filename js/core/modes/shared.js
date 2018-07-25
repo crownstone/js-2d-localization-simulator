@@ -1,9 +1,6 @@
 let width  = 0;
 let height = 0;
 
-let meterInPx = 0;
-let paddingInMeters = 0;
-
 let pixelsPadding = 0;
 
 let wIntegerMeters = 0;
@@ -16,19 +13,16 @@ function evalValues() {
   width  = canvas.width;
   height = canvas.height;
 
-  meterInPx = CANVAS_SETTINGS.meterToPixels;
-  paddingInMeters = CANVAS_SETTINGS.paddingInMeters;
-
-  pixelsPadding = paddingInMeters*meterInPx;
+  pixelsPadding = PADDING_IN_METERS*METERS_IN_PIXELS;
 
   let drawableWidth = width - 2*pixelsPadding;
   let drawableHeight = height - 2*pixelsPadding;
 
-  wIntegerMeters = Math.floor(drawableWidth/meterInPx);
-  wPaddingCmPx = 0.5*((drawableWidth/meterInPx) - wIntegerMeters) * meterInPx
+  wIntegerMeters = Math.floor(drawableWidth/METERS_IN_PIXELS);
+  wPaddingCmPx = 0.5*((drawableWidth/METERS_IN_PIXELS) - wIntegerMeters) * METERS_IN_PIXELS
 
-  hIntegerMeters = Math.floor(drawableHeight/meterInPx);
-  hPaddingCmPx = 0.5*((drawableHeight/meterInPx) - hIntegerMeters) * meterInPx
+  hIntegerMeters = Math.floor(drawableHeight/METERS_IN_PIXELS);
+  hPaddingCmPx = 0.5*((drawableHeight/METERS_IN_PIXELS) - hIntegerMeters) * METERS_IN_PIXELS
 }
 
 
@@ -38,19 +32,19 @@ function drawTextOnGrid(text, xInMeters, yInMeters, xPxOffset = 0, yPxOffset = 0
   ctx.fillStyle = color;
   ctx.textBaseline = 'middle';
   ctx.fillText(text,
-    pixelsPadding + wPaddingCmPx + xInMeters*meterInPx - xPxOffset,
-    pixelsPadding + hPaddingCmPx + yInMeters*meterInPx - yPxOffset
+    pixelsPadding + wPaddingCmPx + xInMeters*METERS_IN_PIXELS - xPxOffset,
+    pixelsPadding + hPaddingCmPx + yInMeters*METERS_IN_PIXELS - yPxOffset
   )
 }
 
 function drawLineOnGrid(x1InMeters, y1InMeters, x2InMeters, y2InMeters, width = 1, strokeStyle = "#f00") {
   ctx.beginPath();
   ctx.moveTo(
-    pixelsPadding + wPaddingCmPx + x1InMeters*meterInPx,
-    pixelsPadding + hPaddingCmPx + y1InMeters*meterInPx);
+    pixelsPadding + wPaddingCmPx + x1InMeters*METERS_IN_PIXELS,
+    pixelsPadding + hPaddingCmPx + y1InMeters*METERS_IN_PIXELS);
   ctx.lineTo(
-    pixelsPadding + wPaddingCmPx + x2InMeters*meterInPx,
-    pixelsPadding + hPaddingCmPx + y2InMeters*meterInPx);
+    pixelsPadding + wPaddingCmPx + x2InMeters*METERS_IN_PIXELS,
+    pixelsPadding + hPaddingCmPx + y2InMeters*METERS_IN_PIXELS);
 
   ctx.lineWidth = width;
   ctx.strokeStyle = strokeStyle
@@ -60,8 +54,8 @@ function drawLineOnGrid(x1InMeters, y1InMeters, x2InMeters, y2InMeters, width = 
 
 function drawCircleOnGrid(xInMeters,yInMeters, radius = 10, color ='red') {
   ctx.circle(
-    pixelsPadding + wPaddingCmPx + xInMeters*meterInPx,
-    pixelsPadding + hPaddingCmPx + yInMeters*meterInPx, radius);
+    pixelsPadding + wPaddingCmPx + xInMeters*METERS_IN_PIXELS,
+    pixelsPadding + hPaddingCmPx + yInMeters*METERS_IN_PIXELS, radius);
   ctx.fillStyle = color;
   ctx.fill();
 }
@@ -81,8 +75,8 @@ function drawSquareOnGrid(xInMeters,yInMeters, size = 10, color ='red') {
   ctx.beginPath();
   ctx.fillStyle = color
   ctx.rect(
-    pixelsPadding + wPaddingCmPx + xInMeters*meterInPx - 0.5*size,
-    pixelsPadding + hPaddingCmPx + yInMeters*meterInPx - 0.5 * size,
+    pixelsPadding + wPaddingCmPx + xInMeters*METERS_IN_PIXELS - 0.5*size,
+    pixelsPadding + hPaddingCmPx + yInMeters*METERS_IN_PIXELS - 0.5 * size,
     size, size);
   ctx.fill();
   ctx.closePath();
@@ -91,14 +85,14 @@ function drawSquareOnGrid(xInMeters,yInMeters, size = 10, color ='red') {
 function pixelsToMeters(x,y, snap = true) {
   x -= wPaddingCmPx;
   x -= pixelsPadding;
-  x /= meterInPx;
+  x /= METERS_IN_PIXELS;
 
   if (snap)
     x = Math.round(x*4)/4
 
   y -= hPaddingCmPx;
   y -= pixelsPadding;
-  y /= meterInPx;
+  y /= METERS_IN_PIXELS;
 
   if (snap)
     y = Math.round(y*4)/4

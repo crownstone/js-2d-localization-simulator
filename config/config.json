@@ -1,0 +1,13 @@
+{
+  "canvas": {
+    "meterToPixels": 75,
+    "paddingInMeters": 2,
+    "blockSizeInPixels": 20,
+    "colorBands": 15
+  },
+  "math": {
+    "calibrationValueAt1Meter": -60,
+    "nValue": 4,
+    "rssiThreshold": -98
+  }
+}

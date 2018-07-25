@@ -6,7 +6,6 @@ let ctx = null;
 let ROOMS = {};
 let CROWNSTONES = {};
 let TRAINING_LOCATIONS = {};
-let CANVAS_SETTINGS = {};
 
 
 
@@ -48,8 +47,19 @@ function loadConfig() {
   );
 
   promises.push(
-    getFile('./config/canvas.json')
-      .then((data) => { CANVAS_SETTINGS = JSON.parse(data); }).catch((err) => { console.warn('Error in getting canvas settings:', err) })
+    getFile('./config/config.json')
+      .then((data) => {
+        let settings = JSON.parse(data);
+
+        N_VALUE = settings.math.nValue;
+        CALIBRATION_VALUE = settings.math.calibrationValueAt1Meter;
+        RSSI_THRESHOLD = settings.math.rssiThreshold;
+        COLOR_BANDS = settings.canvas.colorBands;
+        BLOCK_SIZE = settings.canvas.blockSizeInPixels; // px
+        METERS_IN_PIXELS = settings.canvas.meterToPixels;
+        PADDING_IN_METERS = settings.canvas.paddingInMeters;
+
+      }).catch((err) => { console.warn('Error in getting settings:', err) })
   );
 
   return Promise.all(promises);

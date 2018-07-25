@@ -6,7 +6,6 @@ function initPlaceCrownstoneModeHandler() {
     if (CROWNSTONES.length > 0) {
       CROWNSTONES.pop();
     }
-
     render();
   });
 

@@ -1,14 +1,23 @@
-let N_VALUE = 3.0;
-let CALIBRATION_VALUE = -60;
+
+/** CHANGE THESE VALUES IN CONFIG.JSON **/
+    let N_VALUE = 4.0;
+    let CALIBRATION_VALUE = -55;
+    let RSSI_THRESHOLD = -95;
+    let COLOR_BANDS = 15;
+    let BLOCK_SIZE = 20; // px
+    let METERS_IN_PIXELS = 0;
+    let PADDING_IN_METERS = 0;
+/** CHANGE THESE VALUES IN CONFIG.JSON **/
+// ------------------------------------ //
 
 let OPERATION_MODE = 'DRAW_ROOMS';
 
-let BLOCK_SIZE = 20; // px
 
 let SELECTED_ROOM_ID = null
 let SELECTED_STONE_ID = null
 
 let eventBus = new EventBusClass()
+
 
 var keycharmer = keycharm();
 

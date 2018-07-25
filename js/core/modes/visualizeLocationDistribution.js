@@ -15,7 +15,6 @@ function generateFingerprints() {
     fingerprintSet[roomId] = {};
 
     let trainingPoints = TRAINING_LOCATIONS[roomId];
-
     trainingPoints.forEach((point) => {
       let sampleVector = getRssiFromStonesToPoint(point.x, point.y);
       let crownstonesInVector = Object.keys(sampleVector);
@@ -55,6 +54,7 @@ function drawDistribution() {
       let vector = getRssiFromStonesToPoint(x,y);
 
       let result = evaluateProbabilities(vector);
+
       let roomsInResult = Object.keys(result);
       let max = 0;
       let maxId = 0;
@@ -68,7 +68,7 @@ function drawDistribution() {
       data.push({x:i*BLOCK_SIZE+0.5*BLOCK_SIZE, y:j*BLOCK_SIZE+0.5*BLOCK_SIZE, z:max, style: 0.5})
 
       if (maxId === "NO_ROOM") {
-        drawSquareOnGrid(x,y, BLOCK_SIZE, 'rgba(255,0,0,0.7)')
+        drawSquareOnGrid(x,y, BLOCK_SIZE, 'rgba(0,0,0,0.7)')
       }
       else {
         if (!ROOMS[maxId]) {
@@ -95,7 +95,10 @@ function getRssiFromStonesToPoint(x,y) {
     let dx = x - CROWNSTONES[i].position.x;
     let dy = y - CROWNSTONES[i].position.y;
     let distance = Math.sqrt(dx*dx + dy*dy);
-    result[CROWNSTONES[i].id] = getRSSI(distance);
+    let rssi = getRSSI(distance);
+    if (rssi > RSSI_THRESHOLD) {
+      result[CROWNSTONES[i].id] = rssi;
+    }
   }
 
   return result;

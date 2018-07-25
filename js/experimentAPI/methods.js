@@ -38,4 +38,17 @@ function clearStoredModels() {
   naiveBayesianClassifier.clear();
 }
 
-let naiveBayesianClassifier = new NaiveBayesian();
+
+/**
+ * Draw a custom element on the box. X and Y are in meters so all the canvas methods that draw to grid can be used.
+ * Options is a free object that you can use as you'd like.
+ * @param x
+ * @param y
+ * @param options
+ */
+function drawCustomElement(x, y, options) {
+  naiveBayesianClassifier.drawCustomElement(x, y, options)
+}
+
+// let naiveBayesianClassifier = new NaiveBayesian('rssi');
+let naiveBayesianClassifier = new NaiveBayesian('distance');

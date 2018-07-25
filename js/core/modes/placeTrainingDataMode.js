@@ -21,7 +21,6 @@ function initPlaceTrainingDataModeHandler() {
       TRAINING_LOCATIONS[SELECTED_ROOM_ID] = [];
     }
 
-
     TRAINING_LOCATIONS[SELECTED_ROOM_ID].push({x:x,y:y})
     render();
   }))
@@ -37,7 +36,6 @@ function renderPlaceTrainingDataMode() {
   evalValues();
   drawGrid();
   drawAllWalls();
-
 
   drawAllTrainingPointsInRoom(TRAINING_LOCATIONS[SELECTED_ROOM_ID]);
 }

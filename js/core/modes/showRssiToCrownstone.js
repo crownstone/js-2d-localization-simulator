@@ -1,6 +1,31 @@
 
 
 function initRSSItoCrownstonesHandler() {
+  unsubscribeEvents.push(eventBus.on("CanvasClick", (point) => {
+    let {x , y} = pixelsToMeters(point.x, point.y);
+
+    CROWNSTONES.forEach((crownstone) => {
+      let p = crownstone.position;
+      let mRadius = 15 / METERS_IN_PIXELS;
+      if (x >= p.x - mRadius && x <= p.x + mRadius && y >= p.y - mRadius && y < p.y + mRadius) {
+        SELECTED_STONE_ID = crownstone.id;
+
+        let selectedStoneIndex = 0;
+        for (let i = 0; i < CROWNSTONES.length; i++) {
+          if (SELECTED_STONE_ID == CROWNSTONES[i].id) {
+            selectedStoneIndex = i;
+            break;
+          }
+        }
+
+        stoneSelect.selectedIndex = selectedStoneIndex;
+      }
+    })
+    render();
+  }))
+}
+
+function setStoneSelectionToStoneId(stoneId) {
 
 }
 
@@ -51,7 +76,8 @@ function drawRssiToCrownstone() {
     }
   }
 
-  let range = highest - lowest;
+  let thresholdedLowest = Math.max(RSSI_THRESHOLD, lowest);
+  let range = highest - thresholdedLowest;
 
   for (let i = 0; i < xblockCount; i++) {
     for (let j = 0; j < yblockCount; j++) {
@@ -65,16 +91,24 @@ function drawRssiToCrownstone() {
       let distance = Math.sqrt(dx*dx + dy*dy);
       let rssi = getRSSI(distance);
 
-      let rawFactor = (rssi - lowest) / range;
-      let factor = Math.min(1,Math.max(0,rawFactor));
+      if (rssi < RSSI_THRESHOLD) {
+        drawSquareOnGrid(x, y, BLOCK_SIZE, "rgba(0,0,0,0.7)");
+      }
+      else {
+        let rawFactor = (rssi - thresholdedLowest) / range;
+        let factor = Math.min(1,Math.max(0,rawFactor));
 
-      let rgb = hsv2rgb((1-factor) * 270, 1, 1);
-      let minOpacity = 0.3;
-      let color = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (factor*(1-minOpacity) + minOpacity) + ')';
-      drawSquareOnGrid(x, y, BLOCK_SIZE, color);
+        factor = Math.round(factor*COLOR_BANDS)*1/COLOR_BANDS
+
+        let rgb = hsv2rgb((1-factor) * 270, 1, 1);
+        let minOpacity = 0.3;
+        let color = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (factor*(1-minOpacity) + minOpacity) + ')';
+        drawSquareOnGrid(x, y, BLOCK_SIZE, color);
+      }
+
     }
   }
 
-  drawTextOnGrid("minValue:" + Math.round(lowest) + " maxValue:" + Math.round(highest), 0, -1);
+  drawTextOnGrid("minValue:" + Math.round(lowest) + " maxValue:" + Math.round(highest) + " threshold:" + RSSI_THRESHOLD, 0, -1);
 }
 

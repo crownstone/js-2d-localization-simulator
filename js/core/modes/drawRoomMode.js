@@ -1,12 +1,4 @@
 
-
-function renderDrawRoom() {
-  evalValues()
-  drawGrid()
-  drawAllWalls()
-}
-
-
 function initDrawRoomModeHandler() {
   // listen to the events
   keycharmer.bind('backspace', () => {
@@ -39,6 +31,14 @@ function initDrawRoomModeHandler() {
   unsubscribeEvents.push(eventBus.on("PrintResults", () => {
     console.log(JSON.stringify(ROOMS, undefined, 2))
   }))
+}
+
+
+
+function renderDrawRoom() {
+  evalValues()
+  drawGrid()
+  drawAllWalls()
 }
 
 

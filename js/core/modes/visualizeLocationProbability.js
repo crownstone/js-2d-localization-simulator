@@ -7,31 +7,6 @@ function initVisualizeLocationProbabilityHandler() {
   processTrainingData(generateFingerprints());
 }
 
-function generateFingerprints() {
-  let fingerprintSet = {};
-
-  let roomKeys = Object.keys(TRAINING_LOCATIONS);
-  roomKeys.forEach((roomId) => {
-    fingerprintSet[roomId] = {};
-
-    let trainingPoints = TRAINING_LOCATIONS[roomId];
-
-    trainingPoints.forEach((point) => {
-      let sampleVector = getRssiFromStonesToPoint(point.x, point.y);
-      let crownstonesInVector = Object.keys(sampleVector);
-      crownstonesInVector.forEach((crownstoneId) => {
-        if (!fingerprintSet[roomId][crownstoneId]) {
-          fingerprintSet[roomId][crownstoneId] = [];
-        }
-        fingerprintSet[roomId][crownstoneId].push(sampleVector[crownstoneId]);
-      })
-    })
-
-  })
-
-  return fingerprintSet;
-}
-
 function renderVisualizeLocationProbabilityDistribution() {
   evalValues();
   drawProbabilityDistribution()
@@ -80,16 +55,30 @@ function drawProbabilityDistribution() {
 
       let probability = result[SELECTED_ROOM_ID];
 
+      if (probability === 0) {
+        drawSquareOnGrid(x, y, BLOCK_SIZE, "rgba(0,0,0,0.7)");
+        drawCustomElement(x,y, {color: '#fff'})
+      }
+      else {
+        let rawFactor = (probability - lowest) / range;
+        let factor = Math.min(1, Math.max(0, rawFactor));
 
-      let rawFactor = (probability - lowest) / range;
-      let factor = Math.min(1,Math.max(0,rawFactor));
+        factor = Math.round(factor * COLOR_BANDS) * 1 / COLOR_BANDS
 
-      let rgb = hsv2rgb((1-factor) * 270, 1, 1);
-      let minOpacity = 0.3;
-      let color = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (factor*(1-minOpacity) + minOpacity) + ')';
-      drawSquareOnGrid(x, y, BLOCK_SIZE, color);
+        let rgb = hsv2rgb((1 - factor) * 270, 1, 1);
+        let minOpacity = 0.3;
+        let color = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (factor * (1 - minOpacity) + minOpacity) + ')';
+        drawSquareOnGrid(x, y, BLOCK_SIZE, color);
 
-      data.push({x:i*BLOCK_SIZE+0.5*BLOCK_SIZE, y:j*BLOCK_SIZE+0.5*BLOCK_SIZE, z:probability, style:factor})
+        data.push({
+          x: i * BLOCK_SIZE + 0.5 * BLOCK_SIZE,
+          y: j * BLOCK_SIZE + 0.5 * BLOCK_SIZE,
+          z: probability,
+          style: factor
+        })
+
+        drawCustomElement(x,y)
+      }
     }
   }
 }
