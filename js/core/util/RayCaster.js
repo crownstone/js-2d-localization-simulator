@@ -1,11 +1,23 @@
 
+function checkIfInRoom(pointX, pointY, room) {
+  let amountOfintersections = castRay(0,pointY, pointX, pointY, room).length;
 
-function castRay(targetX, targetY, room) {
-  let padding = 10;
-  let intersections = 0;
+  return intersections%2 === 1;
+}
 
-  if (!room.corners) { return false; }
-  if (room.corners.length < 3) { return false; }
+
+function castRay(startX, startY, targetX, targetY, room) {
+  let padding = 20;
+  let stepSize = Math.floor(0.5*padding)
+  let intersectionPoints = [];
+
+  let dx = targetX - startX;
+  let dy = targetY - startY;
+  let distance = Math.sqrt(dx*dx + dy*dy);
+  let stepCount = Math.ceil( distance/ stepSize );
+
+  if (!room.corners) { return 0; }
+  if (room.corners.length < 3) { return 0; }
 
   let checkIntersectionWithWall = function(x,y,corner1, corner2) {
     let c1 = metersToPixels(corner1.x, corner1.y);
@@ -31,30 +43,65 @@ function castRay(targetX, targetY, room) {
     return false;
   }
 
+  // console.log("START", startX, startY, targetX, targetY)
+
   let previouslyInWall = null;
-  for (let i = 0; i <= targetX; i++) {
+  for (let i = 0; i < stepCount; i++) {
     let inWall = false;
+    let stepX = startX + i * (stepSize * dx/distance)
+    let stepY = startY + i * (stepSize * dy/distance)
+
+    // let m = pixelsToMeters(stepX, stepY, false);
+    // drawCircleOnGrid(m.x, m.y, 2)
+
     for (let k = 1; k < room.corners.length; k++) {
-      if (checkIntersectionWithWall(i, targetY, room.corners[k-1], room.corners[k])) {
+      if (checkIntersectionWithWall(stepX, stepY, room.corners[k-1], room.corners[k])) {
         inWall = true;
       }
     }
 
-    if (checkIntersectionWithWall(i, targetY, room.corners[room.corners.length-1], room.corners[0])) {
+    if (checkIntersectionWithWall(stepX, stepY, room.corners[room.corners.length-1], room.corners[0])) {
       inWall = true;
     }
 
     if (previouslyInWall !== null) {
       if (inWall !== previouslyInWall && inWall === false) {
         // state Change!
-        intersections += 1;
+        intersectionPoints.push({x:stepX, y:stepY});
       }
     }
     previouslyInWall = inWall;
-
   }
 
-  return intersections%2 === 1;
+  return intersectionPoints;
+}
+
+
+/**
+ * values in pixels
+ * @param fromX
+ * @param fromY
+ * @param toX
+ * @param toY
+ * @returns {number}
+ */
+function getAmountOfWallIntersections(fromX, fromY, toX, toY) {
+  let roomIds = Object.keys(ROOMS);
+  let intersections = [];
+  let intersectionMap = {};
+  roomIds.forEach((roomId, index) => {
+    let roomIntersections = castRay(fromX, fromY, toX, toY, ROOMS[roomId]);
+    roomIntersections.forEach((intersection) => {
+      let intersectionId = 'x:' + Math.round(intersection.x) + ',y:' + Math.round(intersection.y);
+      if (intersectionMap[intersectionId] === undefined) {
+        intersections.push(intersection)
+      }
+      intersectionMap[intersectionId] = true;
+    })
+  })
+
+  return intersections.length;
+
 }
 
 function getSurfaceOfTriangleArray(triangleArray) {

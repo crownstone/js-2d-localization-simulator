@@ -53,9 +53,10 @@ function drawLineOnGrid(x1InMeters, y1InMeters, x2InMeters, y2InMeters, width = 
 }
 
 function drawCircleOnGrid(xInMeters,yInMeters, radius = 10, color ='red') {
+  let pixelValues = metersToPixels(xInMeters,yInMeters)
   ctx.circle(
-    pixelsPadding + wPaddingCmPx + xInMeters*METERS_IN_PIXELS,
-    pixelsPadding + hPaddingCmPx + yInMeters*METERS_IN_PIXELS, radius);
+    pixelValues.x,
+    pixelValues.y, radius);
   ctx.fillStyle = color;
   ctx.fill();
 }
@@ -126,6 +127,15 @@ function getRssiFromStonesToPoint(x,y) {
   return result;
 }
 
+
+/**
+ * all values are in meters;
+ * @param stone
+ * @param x
+ * @param y
+ * @param ignoreThreshold
+ * @returns {*}
+ */
 function getRssiFromStoneToPoint(stone, x, y, ignoreThreshold = false) {
   let dx = x - stone.position.x;
   let dy = y - stone.position.y;
@@ -145,7 +155,15 @@ function getRssiFromStoneToPoint(stone, x, y, ignoreThreshold = false) {
     distance *= (Number(ATTENUATION_FACTOR) + (1-ATTENUATION_FACTOR) + ATTENUATION_FACTOR*(Math.pow(factor,ATTENUATION)));
   }
   let rssi = getRSSI(distance);
+
   if (rssi > RSSI_THRESHOLD || ignoreThreshold === true) {
+    // let stonePosInPixels = metersToPixels(stone.position.x, stone.position.y)
+    // let targetPosInPixels = metersToPixels(x,y)
+    //
+    // let intersectionCount = getAmountOfWallIntersections(targetPosInPixels.x, targetPosInPixels.y, stonePosInPixels.x, stonePosInPixels.y)
+    // rssi -= 3*intersectionCount;
+    // drawTextOnGrid(intersectionCount, x,y)
+
     return rssi;
   }
   return null;

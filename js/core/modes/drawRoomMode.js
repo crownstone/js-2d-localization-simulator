@@ -19,7 +19,7 @@ function initDrawRoomModeHandler() {
 
     let roomIds = Object.keys(ROOMS);
     roomIds.forEach((roomId, index) => {
-      if (castRay(point.x, point.y, ROOMS[roomId])) {
+      if (checkIfInRoom(point.x, point.y, ROOMS[roomId])) {
         console.log('clicked on room', roomId)
       }
     })

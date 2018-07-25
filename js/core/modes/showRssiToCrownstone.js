@@ -4,15 +4,32 @@ function initRSSItoCrownstonesHandler() {
   unsubscribeEvents.push(eventBus.on("CanvasClick", (point) => {
     let {x , y} = pixelsToMeters(point.x, point.y);
 
+    let changed = false;
     CROWNSTONES.forEach((crownstone) => {
       let p = crownstone.position;
       let mRadius = 15 / METERS_IN_PIXELS;
       if (x >= p.x - mRadius && x <= p.x + mRadius && y >= p.y - mRadius && y < p.y + mRadius) {
         SELECTED_STONE_ID = crownstone.id;
-        setStoneSelectionToStoneId(SELECTED_STONE_ID)
+        setStoneSelectionToStoneId(SELECTED_STONE_ID);
+        changed = true;
       }
     })
-    render();
+
+
+    let targetPosInPixels = metersToPixels(CROWNSTONES[5].position.x, CROWNSTONES[5].position.y)
+
+    let wallIntersections = getAmountOfWallIntersections(point.x, point.y, targetPosInPixels.x, targetPosInPixels.y);
+    if (wallIntersections > 0) {
+      // console.log("INTERSECTIONS", x,y, wallIntersections)
+    }
+    console.log("INTERSECTIONS", point.x, point.y, wallIntersections)
+
+
+
+
+    if (changed) {
+      render();
+    }
   }))
 }
 
@@ -58,6 +75,7 @@ function drawRssiToCrownstone() {
 
   let lowest = 0;
   let highest = -50;
+
   for (let i = 0; i < xblockCount; i++) {
     for (let j = 0; j < yblockCount; j++) {
       let xPx = 0.5 * BLOCK_SIZE + i * BLOCK_SIZE;
