@@ -6,6 +6,7 @@
     let N_VALUE = 4.0;
     let CALIBRATION_VALUE = -55;
     let RSSI_THRESHOLD = -95;
+    let WALL_RSSI_DROP = 10;  // db
     let COLOR_BANDS = 15;
     let BLOCK_SIZE = 20; // px
     let METERS_IN_PIXELS = 0;

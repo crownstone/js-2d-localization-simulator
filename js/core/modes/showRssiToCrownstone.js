@@ -3,11 +3,10 @@
 function initRSSItoCrownstonesHandler() {
   unsubscribeEvents.push(eventBus.on("CanvasClick", (point) => {
     let {x , y} = pixelsToMeters(point.x, point.y);
-
     let changed = false;
     CROWNSTONES.forEach((crownstone) => {
       let p = crownstone.position;
-      let mRadius = 15 / METERS_IN_PIXELS;
+      let mRadius = 30 / METERS_IN_PIXELS;
       if (x >= p.x - mRadius && x <= p.x + mRadius && y >= p.y - mRadius && y < p.y + mRadius) {
         SELECTED_STONE_ID = crownstone.id;
         setStoneSelectionToStoneId(SELECTED_STONE_ID);
@@ -15,20 +14,9 @@ function initRSSItoCrownstonesHandler() {
       }
     })
 
-
-    let targetPosInPixels = metersToPixels(CROWNSTONES[5].position.x, CROWNSTONES[5].position.y)
-
-    let wallIntersections = getAmountOfWallIntersections(point.x, point.y, targetPosInPixels.x, targetPosInPixels.y);
-    if (wallIntersections > 0) {
-      // console.log("INTERSECTIONS", x,y, wallIntersections)
-    }
-    console.log("INTERSECTIONS", point.x, point.y, wallIntersections)
-
-
-
-
     if (changed) {
-      render();
+      render(true)
+      setTimeout(() => { render() }, 10)
     }
   }))
 }
@@ -47,16 +35,16 @@ function setStoneSelectionToStoneId(stoneId) {
 }
 
 
-function renderRSSItoCrownstones() {
+function renderRSSItoCrownstones(simple) {
   evalValues();
 
-  drawRssiToCrownstone()
+  if (!simple) {
+    drawRssiToCrownstone()
+  }
 
   drawAllWalls();
   drawAllCrownstones();
 }
-
-
 
 
 function drawRssiToCrownstone() {
@@ -76,7 +64,9 @@ function drawRssiToCrownstone() {
   let lowest = 0;
   let highest = -50;
 
+  let values = [];
   for (let i = 0; i < xblockCount; i++) {
+    values.push([]);
     for (let j = 0; j < yblockCount; j++) {
       let xPx = 0.5 * BLOCK_SIZE + i * BLOCK_SIZE;
       let yPx = 0.5 * BLOCK_SIZE + j * BLOCK_SIZE;
@@ -84,7 +74,7 @@ function drawRssiToCrownstone() {
       let {x, y} = pixelsToMeters(xPx, yPx, false);
 
       let rssi = getRssiFromStoneToPoint(selectedCrownstone, x, y, true)
-
+      values[i].push(rssi);
 
       if (rssi > -40) {
         rssi = -40;
@@ -94,6 +84,8 @@ function drawRssiToCrownstone() {
       highest = Math.max(highest, rssi);
     }
   }
+  // console.timeEnd("start")
+  // console.log(values)
 
   let thresholdedLowest = Math.max(RSSI_THRESHOLD, lowest);
   let range = highest - thresholdedLowest;
@@ -105,10 +97,11 @@ function drawRssiToCrownstone() {
 
       let {x, y} = pixelsToMeters(xPx, yPx, false);
 
-      let rssi = getRssiFromStoneToPoint(selectedCrownstone, x, y, true);
+      let rssi = values[i][j];
 
-      let graph3d_rawFactor = (rssi - lowest) / range;
-      let graph3d_factor = Math.min(1,Math.max(0,graph3d_rawFactor));
+      // map this to 0.1 ... 1.0 from threshold ... max
+      let graph3d_rawFactor = (rssi - thresholdedLowest) / range;
+      let graph3d_factor = Math.min(1,Math.max(0,0.1 + 0.9*graph3d_rawFactor));
 
       if (rssi < RSSI_THRESHOLD) {
         drawSquareOnGrid(x, y, BLOCK_SIZE, "rgba(0,0,0,0.7)");
@@ -145,7 +138,6 @@ function drawRssiToCrownstone() {
   }
 
   drawTextOnGrid("minValue:" + Math.round(lowest) + " maxValue:" + Math.round(highest) + " threshold:" + RSSI_THRESHOLD, 0, -1);
-
   // update 3d graph.
   vis3dDataset.update(data);
 }

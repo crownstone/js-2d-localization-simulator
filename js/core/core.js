@@ -4,7 +4,7 @@ let canvas = null;
 let ctx = null;
 
 let ROOMS = {};
-let CROWNSTONES = {};
+let CROWNSTONES = [];
 let TRAINING_LOCATIONS = {};
 
 
@@ -53,6 +53,7 @@ function loadConfig() {
         let settings = JSON.parse(data);
 
         AUTO_REDRAW_GRAPH3D = settings.gui.autoRedrawGraph3d;
+        WALL_RSSI_DROP = settings.system.wallRssiDrop;
         ATTENUATION = settings.system.attenuation;
         ATTENUATION_FACTOR = settings.system.attenuationFactor;
         N_VALUE = settings.system.nValue;
@@ -70,39 +71,35 @@ function loadConfig() {
 }
 
 
-function render() {
+function render(options) {
   // clear room
   ctx.clearRect(0,0, canvas.width, canvas.height);
-  // ctx.beginPath();
-  // ctx.rect(0,0,canvas.width, canvas.height);
-  // ctx.fillStyle = "red";
-  // ctx.fill();
 
   switch (OPERATION_MODE) {
     case "DRAW_ROOMS":
-      renderDrawRoom();
+      renderDrawRoom(options);
       break
     case "PLACE_CROWNSTONES":
-      renderPlaceCrownstoneMode()
+      renderPlaceCrownstoneMode(options)
       break
     case "PLACE_TRAINING_POINTS":
-      renderPlaceTrainingDataMode()
+      renderPlaceTrainingDataMode(options)
       break
     case "VISUALIZE_LOCALIZATION_DISTRIBUTION":
-      renderVisualizeLocationDistribution();
+      renderVisualizeLocationDistribution(options);
       break
     case "VISUALIZE_LOCALIZATION_PROBABILITY":
-      renderVisualizeLocationProbabilityDistribution();
+      renderVisualizeLocationProbabilityDistribution(options);
       break
     case "SHOW_RSSI_TO_CROWNSTONE":
-      renderRSSItoCrownstones();
+      renderRSSItoCrownstones(options);
       break
     default:
       break
   }
 
   if (AUTO_REDRAW_GRAPH3D) {
-    visInit3d();
+    setTimeout(() => { visInit3d(); }, 10);
   }
 
 }

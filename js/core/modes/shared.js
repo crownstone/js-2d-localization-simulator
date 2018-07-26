@@ -84,33 +84,22 @@ function drawSquareOnGrid(xInMeters,yInMeters, size = 10, color ='red') {
 }
 
 function pixelsToMeters(x,y, snap = true) {
-  x -= wPaddingCmPx;
-  x -= pixelsPadding;
-  x /= METERS_IN_PIXELS;
+  x = (x - wPaddingCmPx - pixelsPadding) / METERS_IN_PIXELS;
+  y = (y - hPaddingCmPx - pixelsPadding) / METERS_IN_PIXELS;
 
-  if (snap)
-    x = Math.round(x*4)/4
-
-  y -= hPaddingCmPx;
-  y -= pixelsPadding;
-  y /= METERS_IN_PIXELS;
-
-  if (snap)
-    y = Math.round(y*4)/4
+  if (snap) {
+    x = Math.round(x * 4) / 4
+    y = Math.round(y * 4) / 4
+  }
 
   return {x,y}
 }
 
 function metersToPixels(x,y) {
-  x *= METERS_IN_PIXELS;
-  x += pixelsPadding;
-  x += wPaddingCmPx;
-
-  y *= METERS_IN_PIXELS;
-  y += pixelsPadding;
-  y += hPaddingCmPx;
-
-  return {x,y}
+  return {
+    x: x*METERS_IN_PIXELS + pixelsPadding + wPaddingCmPx,
+    y: y*METERS_IN_PIXELS + pixelsPadding + hPaddingCmPx
+  }
 }
 
 
@@ -157,12 +146,14 @@ function getRssiFromStoneToPoint(stone, x, y, ignoreThreshold = false) {
   let rssi = getRSSI(distance);
 
   if (rssi > RSSI_THRESHOLD || ignoreThreshold === true) {
-    // let stonePosInPixels = metersToPixels(stone.position.x, stone.position.y)
-    // let targetPosInPixels = metersToPixels(x,y)
-    //
-    // let intersectionCount = getAmountOfWallIntersections(targetPosInPixels.x, targetPosInPixels.y, stonePosInPixels.x, stonePosInPixels.y)
-    // rssi -= 3*intersectionCount;
-    // drawTextOnGrid(intersectionCount, x,y)
+    if (WALL_RSSI_DROP !== 0) {
+      let stonePosInPixels = metersToPixels(stone.position.x, stone.position.y)
+      let targetPosInPixels = metersToPixels(x, y)
+
+      let intersectionCount = getAmountOfWallIntersections(targetPosInPixels.x, targetPosInPixels.y, stonePosInPixels.x, stonePosInPixels.y)
+      rssi += WALL_RSSI_DROP * intersectionCount;
+      // drawTextOnGrid(intersectionCount, x,y)
+    }
 
     return rssi;
   }

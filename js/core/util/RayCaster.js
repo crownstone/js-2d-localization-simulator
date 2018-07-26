@@ -1,77 +1,103 @@
 
 function checkIfInRoom(pointX, pointY, room) {
-  let amountOfintersections = castRay(0,pointY, pointX, pointY, room).length;
-
-  return intersections%2 === 1;
+  let amountOfintersections = castRay(0,0, pointX, pointY, room, true).length;
+  return amountOfintersections%2 === 1;
 }
 
 
-function castRay(startX, startY, targetX, targetY, room) {
-  let padding = 20;
-  let stepSize = Math.floor(0.5*padding)
+function castRay(startX, startY, targetX, targetY, room, highAccuracy = false) {
   let intersectionPoints = [];
+  if (!room.corners)           { return intersectionPoints; }
+  if (room.corners.length < 3) { return intersectionPoints; }
+
+
+  let padding = 0.4*BLOCK_SIZE;
+  let stepSize = 1.8*padding;
+  if (highAccuracy) {
+    padding = 4
+    stepSize = 0.5
+  }
 
   let dx = targetX - startX;
   let dy = targetY - startY;
   let distance = Math.sqrt(dx*dx + dy*dy);
-  let stepCount = Math.ceil( distance/ stepSize );
+  let stepCount = Math.floor( distance / stepSize );
 
-  if (!room.corners) { return 0; }
-  if (room.corners.length < 3) { return 0; }
+  let stepSizeX = (stepSize * dx / distance);
+  let stepSizeY = (stepSize * dy / distance);
 
-  let checkIntersectionWithWall = function(x,y,corner1, corner2) {
-    let c1 = metersToPixels(corner1.x, corner1.y);
-    let c2 = metersToPixels(corner2.x, corner2.y)
 
-    let rect = getRect(c1,c2,padding);
-
-    let triangles = [
-      [{x:x, y:y}, rect[0], rect[1]],
-      [{x:x, y:y}, rect[0], rect[2]],
-      [{x:x, y:y}, rect[2], rect[3]],
-      [{x:x, y:y}, rect[3], rect[1]],
-    ];
-
+  let checkIntersectionWithWall = function(triangles, rect, rectSurface) {
     let triangleSurface = getSurfaceOfTriangleArray(triangles);
-    let rectSurface = getSurfaceOfRect(rect);
-
-    // -10 to avoid rounding errors
-    if (triangleSurface <= rectSurface + 10) {
+    if (triangleSurface < rectSurface) {
       // the point is in the rectangle!
       return true;
     }
     return false;
   }
 
-  // console.log("START", startX, startY, targetX, targetY)
+  let cast = function (c1,c2) {
+    let minX = Math.min(c1.x, c2.x) - padding;
+    let maxX = Math.max(c1.x, c2.x) + padding;
+    let minY = Math.min(c1.y, c2.y) - padding;
+    let maxY = Math.max(c1.y, c2.y) + padding;
 
-  let previouslyInWall = null;
-  for (let i = 0; i < stepCount; i++) {
-    let inWall = false;
-    let stepX = startX + i * (stepSize * dx/distance)
-    let stepY = startY + i * (stepSize * dy/distance)
+    let rect = getRect(c1,c2,padding);
+    let rectSurface = getSurfaceOfRect(rect) + 10;  // +10 to avoid rounding errors
+    let triangles = [
+      [null, rect[0], rect[1]],
+      [null, rect[0], rect[2]],
+      [null, rect[2], rect[3]],
+      [null, rect[3], rect[1]],
+    ];
 
-    // let m = pixelsToMeters(stepX, stepY, false);
-    // drawCircleOnGrid(m.x, m.y, 2)
+    let previouslyInWall = false;
+    let stepX = startX;
+    let stepY = startY;
+    for (let i = 0; i < stepCount; i++) {
+      let inWall = false;
+      stepX += stepSizeX;
+      stepY += stepSizeY;
 
-    for (let k = 1; k < room.corners.length; k++) {
-      if (checkIntersectionWithWall(stepX, stepY, room.corners[k-1], room.corners[k])) {
+      if (!(stepX >= minX && stepX <= maxX && stepY >= minY && stepY <= maxY)) {
+        // checkIntersection()
+        if (inWall !== previouslyInWall && inWall === false) {
+          // state Change!
+          intersectionPoints.push([stepX, stepY]);
+        }
+        previouslyInWall = inWall;
+        continue;
+      }
+
+      // let m = pixelsToMeters(stepX, stepY, false);
+      // drawCircleOnGrid(m.x, m.y, 2, '#f00');
+      triangles[0][0] = {x: stepX, y: stepY};
+      triangles[1][0] = {x: stepX, y: stepY};
+      triangles[2][0] = {x: stepX, y: stepY};
+      triangles[3][0] = {x: stepX, y: stepY};
+      if (checkIntersectionWithWall(triangles, rect, rectSurface)) {
         inWall = true;
       }
-    }
 
-    if (checkIntersectionWithWall(stepX, stepY, room.corners[room.corners.length-1], room.corners[0])) {
-      inWall = true;
-    }
-
-    if (previouslyInWall !== null) {
       if (inWall !== previouslyInWall && inWall === false) {
         // state Change!
-        intersectionPoints.push({x:stepX, y:stepY});
+        intersectionPoints.push([stepX, stepY]);
       }
+
+      previouslyInWall = inWall;
     }
-    previouslyInWall = inWall;
   }
+
+  let c1, c2;
+  for (let k = 1; k < room.corners.length; k++) {
+    c1 = metersToPixels(room.corners[k - 1].x, room.corners[k - 1].y);
+    c2 = metersToPixels(room.corners[k].x, room.corners[k].y)
+    cast(c1,c2)
+  }
+
+  c1 = metersToPixels(room.corners[0].x, room.corners[0].y);
+
+  cast(c1,c2)
 
   return intersectionPoints;
 }
@@ -89,16 +115,17 @@ function getAmountOfWallIntersections(fromX, fromY, toX, toY) {
   let roomIds = Object.keys(ROOMS);
   let intersections = [];
   let intersectionMap = {};
-  roomIds.forEach((roomId, index) => {
-    let roomIntersections = castRay(fromX, fromY, toX, toY, ROOMS[roomId]);
+  for (let i = 0; i < roomIds.length; i++) {
+    let roomIntersections = castRay(fromX, fromY, toX, toY, ROOMS[roomIds[i]]);
+    for (let j = 0; j < roomIntersections.length; j++) {}
     roomIntersections.forEach((intersection) => {
-      let intersectionId = 'x:' + Math.round(intersection.x) + ',y:' + Math.round(intersection.y);
+      let intersectionId = 'x:' + Math.round(intersection[0]) + ',y:' + Math.round(intersection[1]);
       if (intersectionMap[intersectionId] === undefined) {
         intersections.push(intersection)
       }
       intersectionMap[intersectionId] = true;
     })
-  })
+  };
 
   return intersections.length;
 
@@ -107,17 +134,17 @@ function getAmountOfWallIntersections(fromX, fromY, toX, toY) {
 function getSurfaceOfTriangleArray(triangleArray) {
   let surface = 0;
   // console.log("SEARCH")
-  triangleArray.forEach((triangle) => {
-    let a = Math.sqrt(Math.pow(triangle[0].x-triangle[1].x,2) + Math.pow(triangle[0].y-triangle[1].y,2));
-    let b = Math.sqrt(Math.pow(triangle[1].x-triangle[2].x,2) + Math.pow(triangle[1].y-triangle[2].y,2));
-    let c = Math.sqrt(Math.pow(triangle[2].x-triangle[0].x,2) + Math.pow(triangle[2].y-triangle[0].y,2));
+  for (let i = 0; i < triangleArray.length; i++) {
+    let triangle = triangleArray[i]
+    let a = Math.sqrt(Math.pow(triangle[0].x - triangle[1].x, 2) + Math.pow(triangle[0].y - triangle[1].y, 2));
+    let b = Math.sqrt(Math.pow(triangle[1].x - triangle[2].x, 2) + Math.pow(triangle[1].y - triangle[2].y, 2));
+    let c = Math.sqrt(Math.pow(triangle[2].x - triangle[0].x, 2) + Math.pow(triangle[2].y - triangle[0].y, 2));
 
-
-    let s = 0.5*(a+b+c); // semiPerimeter
-    let triangleSurface = Math.sqrt(s*(s-a)*(s-b)*(s-c))
+    let s = 0.5 * (a + b + c); // semiPerimeter
+    let triangleSurface = Math.sqrt(s * (s - a) * (s - b) * (s - c))
     // console.log(triangle, a,b,c,triangleSurface)
     surface += triangleSurface;
-  })
+  }
   // console.log("RESULT", surface)
   return surface;
 }
@@ -153,7 +180,6 @@ function getRect(point1, point2, padding) {
   }
 
   let d = Math.sqrt(dx*dx + dy*dy);
-
 
   return [
     {x: point1.x - (dx/d)*padding, y: point1.y + (dy/d)*padding},

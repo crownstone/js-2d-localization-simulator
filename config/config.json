@@ -10,7 +10,8 @@
     "nValue": 4,
     "rssiThreshold": -98,
     "attenuation": 10,
-    "attenuationFactor": 0.75
+    "attenuationFactor": 0.75,
+    "wallRssiDrop": -5
   },
   "gui": {
     "autoRedrawGraph3d": false

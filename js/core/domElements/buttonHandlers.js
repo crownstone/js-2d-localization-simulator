@@ -113,7 +113,6 @@ function populateRoomSelect() {
   });
 
   SELECTED_ROOM_ID = roomIds[0];
-
 }
 
 function populateStoneSelect() {
