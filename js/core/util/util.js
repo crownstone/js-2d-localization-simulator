@@ -44,7 +44,7 @@ function loadFromFile(path, success, error) {
       }
       else {
         if (error === undefined) {
-          console.error("ERROR:", path)
+          console.warn("ERROR:", path)
         }
         else {
           error();
@@ -57,8 +57,33 @@ function loadFromFile(path, success, error) {
   xhr.send();
 }
 
+function precalculateWallAbsorptionMap() {
+  let xblockCount = Math.ceil(canvas.width / BLOCK_SIZE);
+  let yblockCount = Math.ceil(canvas.height / BLOCK_SIZE);
+  for (let i = 0; i < xblockCount; i++) {
+    for (let j = 0; j < yblockCount; j++) {
+      let xPx = 0.5*BLOCK_SIZE + i*BLOCK_SIZE;
+      let yPx = 0.5*BLOCK_SIZE + j*BLOCK_SIZE;
+
+      let {x , y} = pixelsToMeters(xPx, yPx, false);
+
+      getRssiFromStonesToPoint(x,y, true);
+    }
+  }
+  alert("Finished precalculating wall absorption map!")
+}
 
 
+function download(data, fileName) {
+  var dlAnchorElem = document.getElementById('downloadAnchorElem');
+  let json = JSON.stringify(data,undefined, 2);
+  let blob = new Blob([json], {type: "octet/stream"});
+  let url = window.URL.createObjectURL(blob);
+  dlAnchorElem.href = url;
+  dlAnchorElem.download = fileName;
+  dlAnchorElem.click();
+  window.URL.revokeObjectURL(url);
+};
 
 
 CanvasRenderingContext2D.prototype.circle = function (x, y, r) {

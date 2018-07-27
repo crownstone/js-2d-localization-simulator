@@ -34,6 +34,8 @@
     <button onclick="setMode('VISUALIZE_LOCALIZATION_PROBABILITY')" type="button">Visualize localization probability</button>
     <button onclick="setMode('SHOW_RSSI_TO_CROWNSTONE')" type="button">Show RSSI to Crownstone</button>
 </div>
+
+
 <div id="roomSelectDiv" style="display:none">
     <span>Select a Room</span>
     <select id="roomSelect" onchange="changeSelectedRoom()">
@@ -46,9 +48,15 @@
         <option>test</option>
     </select>
 </div>
+<div>
+    <span>Wall absorption map:</span>
+    <button onclick="precalculateWallAbsorptionMap()" type="button">Precalculate wall absorption map</button>
+    <button onclick="download(WALL_ABSORPTION_MAP, 'wallAbsorptionMap.json')" type="button">Download wall absorption map</button>
+    <button onclick="resetWallAbsorptionMap(); alert('Done');" type="button">Clear wall absorption map</button>
+</div>
 <div id="attenuationControl" style="display:none">
-    Attenuation: <input type="range" id="attenuationRange" onchange="changeAttenuation()" min="0" max="20" value="0" step="1" style="width:300px" /><span id="attenuationValue"></span>
-    </br>Attenuation Factor: <input type="range" id="attenuationFactorRange" onchange="changeAttenuationFactor()" min="0" max="1" value="0" step="0.05" style="width:300px" /><span id="attenuationFactorValue"></span>
+    Attenuation: <input type="range" id="attenuationRange" onchange="changeAttenuation()" min="0" max="20" value="0" step="1" style="width:300px" />[<span id="attenuationValue"></span>]
+    with factor: <input type="range" id="attenuationFactorRange" onchange="changeAttenuationFactor()" min="0" max="1" value="0" step="0.05" style="width:300px" />[<span id="attenuationFactorValue"></span>]
 </div>
 <button id="printButton" onclick="printResultsToConsole()" type="button" style="display:none">Print results to console</button>
 <button id="backButton" onclick="setMode(null)" type="button" style="display:none">Back</button>
@@ -56,5 +64,6 @@
 <br />
 <button id="drawGraph" onclick="visInit3d()" type="button">Redraw graph3d</button>
 <div id="graph" style="width:1600px;"></div>
+<a id="downloadAnchorElem" style="display:none"></a>
 </body>
 </html>

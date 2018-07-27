@@ -97,17 +97,16 @@ function pixelsToMeters(x,y, snap = true) {
 
 function metersToPixels(x,y) {
   return {
-    x: x*METERS_IN_PIXELS + pixelsPadding + wPaddingCmPx,
-    y: y*METERS_IN_PIXELS + pixelsPadding + hPaddingCmPx
+    x: Math.round(x*METERS_IN_PIXELS + pixelsPadding + wPaddingCmPx),
+    y: Math.round(y*METERS_IN_PIXELS + pixelsPadding + hPaddingCmPx)
   }
 }
 
 
-
-function getRssiFromStonesToPoint(x,y) {
+function getRssiFromStonesToPoint(x, y, ignoreThreshold = false) {
   let result = {};
   for (let i = 0; i < CROWNSTONES.length; i++) {
-    let rssi = getRssiFromStoneToPoint(CROWNSTONES[i], x, y);
+    let rssi = getRssiFromStoneToPoint(CROWNSTONES[i], x, y, ignoreThreshold);
     if (rssi !== null) {
       result[CROWNSTONES[i].id] = rssi;
     }
@@ -115,7 +114,6 @@ function getRssiFromStonesToPoint(x,y) {
 
   return result;
 }
-
 
 /**
  * all values are in meters;
@@ -145,12 +143,26 @@ function getRssiFromStoneToPoint(stone, x, y, ignoreThreshold = false) {
   }
   let rssi = getRSSI(distance);
 
+
   if (rssi > RSSI_THRESHOLD || ignoreThreshold === true) {
     if (WALL_RSSI_DROP !== 0) {
-      let stonePosInPixels = metersToPixels(stone.position.x, stone.position.y)
+      let intersectionCount = 0;
       let targetPosInPixels = metersToPixels(x, y)
+      if (
+        WALL_ABSORPTION_MAP[stone.id] &&
+        WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x] &&
+        WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x][targetPosInPixels.y] !== undefined ) {
+        intersectionCount = WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x][targetPosInPixels.y];
+      }
+      else {
+        let stonePosInPixels = metersToPixels(stone.position.x, stone.position.y)
+        intersectionCount = getAmountOfWallIntersections(targetPosInPixels.x, targetPosInPixels.y, stonePosInPixels.x, stonePosInPixels.y);
 
-      let intersectionCount = getAmountOfWallIntersections(targetPosInPixels.x, targetPosInPixels.y, stonePosInPixels.x, stonePosInPixels.y)
+        if (!WALL_ABSORPTION_MAP[stone.id]) { WALL_ABSORPTION_MAP[stone.id] = {}; }
+        if (!WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x]) { WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x] = {};  }
+        WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x][targetPosInPixels.y] = intersectionCount;
+      }
+
       rssi += WALL_RSSI_DROP * intersectionCount;
       // drawTextOnGrid(intersectionCount, x,y)
     }

@@ -2,6 +2,7 @@
 function initDrawRoomModeHandler() {
   // listen to the events
   keycharmer.bind('backspace', () => {
+    resetWallAbsorptionMap();
     let activeWallSet = ROOMS[SELECTED_ROOM_ID];
 
     if (activeWallSet.corners === undefined || activeWallSet.corners.length === 0) {
@@ -15,6 +16,7 @@ function initDrawRoomModeHandler() {
   });
 
   unsubscribeEvents.push(eventBus.on("CanvasClick", (point) => {
+    resetWallAbsorptionMap();
     let {x , y} = pixelsToMeters(point.x, point.y);
 
     let roomIds = Object.keys(ROOMS);

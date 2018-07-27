@@ -27,6 +27,15 @@ function coreInit() {
     })
 }
 
+function resetWallAbsorptionMap() {
+  WALL_ABSORPTION_MAP = {};
+  WALL_ABSORPTION_MAP['blockSize'] = BLOCK_SIZE;
+  WALL_ABSORPTION_MAP['paddingInMeters'] = PADDING_IN_METERS;
+  WALL_ABSORPTION_MAP['paddingInPixels'] = PADDING_IN_METERS*METERS_IN_PIXELS;
+  WALL_ABSORPTION_MAP['metersInPixels'] = METERS_IN_PIXELS;
+  WALL_ABSORPTION_MAP['forRooms'] = JSON.stringify(ROOMS);
+  WALL_ABSORPTION_MAP['forCrownstones'] = JSON.stringify(CROWNSTONES);
+}
 
 
 function loadConfig() {
@@ -46,6 +55,7 @@ function loadConfig() {
     getFile('./config/trainingLocations.json')
       .then((data) => { TRAINING_LOCATIONS = JSON.parse(data); }).catch((err) => { console.warn('Error in getting trainingLocations:', err) })
   );
+
 
   promises.push(
     getFile('./config/config.json')
@@ -67,7 +77,29 @@ function loadConfig() {
       }).catch((err) => { console.warn('Error in getting settings:', err) })
   );
 
-  return Promise.all(promises);
+  return Promise.all(promises)
+    .then(() => {
+      return getFile('./config/wallAbsorptionMap.json')
+        .then((data) => {
+          WALL_ABSORPTION_MAP = JSON.parse(data);
+          if (WALL_ABSORPTION_MAP.blockSize !== BLOCK_SIZE) {
+            alert("Wall absorption map is for different block size. Resetting it.");
+            resetWallAbsorptionMap()
+          }
+          else if (WALL_ABSORPTION_MAP['forRooms'] !== JSON.stringify(ROOMS)) {
+            alert("This wall absorption map is for a different room configuration. Resetting it.")
+            resetWallAbsorptionMap()
+          }
+          else if (WALL_ABSORPTION_MAP['forCrownstones'] !== JSON.stringify(CROWNSTONES)) {
+            alert("This wall absorption map is for a different Crownstone configuration. Resetting it.")
+            resetWallAbsorptionMap()
+          }
+
+        }).catch((err) => {
+          resetWallAbsorptionMap()
+          console.warn('Error in getting wall absorption map:', err)
+      })
+    })
 }
 
 

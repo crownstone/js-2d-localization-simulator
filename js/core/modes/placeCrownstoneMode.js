@@ -3,6 +3,7 @@
 function initPlaceCrownstoneModeHandler() {
   // listen to the events
   keycharmer.bind('backspace', () => {
+    resetWallAbsorptionMap();
     if (CROWNSTONES.length > 0) {
       CROWNSTONES.pop();
     }
@@ -10,6 +11,7 @@ function initPlaceCrownstoneModeHandler() {
   });
 
   unsubscribeEvents.push(eventBus.on("CanvasClick", (point) => {
+    resetWallAbsorptionMap();
     let {x , y} = pixelsToMeters(point.x, point.y);
 
     let selectedStone = false;

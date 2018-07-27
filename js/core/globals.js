@@ -14,6 +14,8 @@
 /** CHANGE THESE VALUES IN CONFIG.JSON **/
 // ------------------------------------ //
 
+let WALL_ABSORPTION_MAP = {};
+
 let OPERATION_MODE = 'DRAW_ROOMS';
 let GRAPH3D = null;
 
