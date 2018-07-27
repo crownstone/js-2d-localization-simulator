@@ -1,6 +1,29 @@
 
+
+function getRoomInClick(x,y) {
+  let roomIds = Object.keys(ROOMS);
+  for (let i = 0; i < roomIds.length; i++) {
+    if (checkIfInRoom(x,y, ROOMS[roomIds[i]])) {
+      return roomIds[i]
+    }
+  }
+  return null;
+}
+
 function checkIfInRoom(pointX, pointY, room) {
-  let amountOfintersections = castRay(0,0, pointX, pointY, room, true).length;
+  let centerX = canvas.width*0.5;
+  let centerY = canvas.height*0.5;
+
+  let startX = 0;
+  let startY = 0;
+
+  if (pointX > centerX) {
+    startX = canvas.width;
+  }
+  if (pointY > centerY) { startY = canvas.height; }
+
+  // console.log(centerX, centerY)
+  let amountOfintersections = castRay(startX, startY, pointX, pointY, room, true).length;
   return amountOfintersections%2 === 1;
 }
 
@@ -26,7 +49,6 @@ function castRay(startX, startY, targetX, targetY, room, highAccuracy = false) {
   let stepSizeX = (stepSize * dx / distance);
   let stepSizeY = (stepSize * dy / distance);
 
-
   let checkIntersectionWithWall = function(triangles, rect, rectSurface) {
     let triangleSurface = getSurfaceOfTriangleArray(triangles);
     if (triangleSurface < rectSurface) {
@@ -34,6 +56,18 @@ function castRay(startX, startY, targetX, targetY, room, highAccuracy = false) {
       return true;
     }
     return false;
+  }
+
+  let evaluateIntersectionPoint = function(x,y) {
+    for (let i = 0; i < intersectionPoints.length; i++) {
+      let dx = intersectionPoints[i][0] - x;
+      let dy = intersectionPoints[i][1] - y;
+      let dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 2*padding) {
+        return false;
+      }
+    }
+    return true;
   }
 
   let cast = function (c1,c2) {
@@ -60,17 +94,23 @@ function castRay(startX, startY, targetX, targetY, room, highAccuracy = false) {
       stepY += stepSizeY;
 
       if (!(stepX >= minX && stepX <= maxX && stepY >= minY && stepY <= maxY)) {
-        // checkIntersection()
+
+        // let m = pixelsToMeters(stepX, stepY, false);
+        // drawCircleOnGrid(m.x, m.y, 2, '#00f');
+
         if (inWall !== previouslyInWall && inWall === false) {
           // state Change!
-          intersectionPoints.push([stepX, stepY]);
+          if (evaluateIntersectionPoint(stepX, stepY)) {
+            intersectionPoints.push([stepX, stepY]);
+          }
         }
         previouslyInWall = inWall;
         continue;
       }
 
       // let m = pixelsToMeters(stepX, stepY, false);
-      // drawCircleOnGrid(m.x, m.y, 2, '#f00');
+      // drawCircleOnGrid(m.x, m.y, 5, '#0F0');
+
       triangles[0][0] = {x: stepX, y: stepY};
       triangles[1][0] = {x: stepX, y: stepY};
       triangles[2][0] = {x: stepX, y: stepY};
@@ -81,7 +121,9 @@ function castRay(startX, startY, targetX, targetY, room, highAccuracy = false) {
 
       if (inWall !== previouslyInWall && inWall === false) {
         // state Change!
-        intersectionPoints.push([stepX, stepY]);
+        if (evaluateIntersectionPoint(stepX, stepY)) {
+          intersectionPoints.push([stepX, stepY]);
+        }
       }
 
       previouslyInWall = inWall;
@@ -89,15 +131,16 @@ function castRay(startX, startY, targetX, targetY, room, highAccuracy = false) {
   }
 
   let c1, c2;
+
   for (let k = 1; k < room.corners.length; k++) {
     c1 = metersToPixels(room.corners[k - 1].x, room.corners[k - 1].y);
     c2 = metersToPixels(room.corners[k].x, room.corners[k].y)
-    cast(c1,c2)
+    cast(c1,c2);
   }
 
   c1 = metersToPixels(room.corners[0].x, room.corners[0].y);
 
-  cast(c1,c2)
+  cast(c1,c2);
 
   return intersectionPoints;
 }

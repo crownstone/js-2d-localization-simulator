@@ -4,17 +4,14 @@ function initVisualizeLocationProbabilityHandler() {
   unsubscribeEvents.push(eventBus.on("CanvasClick", (point) => {
     let {x , y} = pixelsToMeters(point.x, point.y);
 
-    let roomIds = Object.keys(ROOMS);
+
     let changed = false;
-    roomIds.forEach((roomId, index) => {
-      if (checkIfInRoom(point.x, point.y, ROOMS[roomId])) {
-        if (roomId !== SELECTED_ROOM_ID) {
-          changed = true;
-          SELECTED_ROOM_ID = roomId;
-          setRoomSelectionToRoomId(SELECTED_ROOM_ID);
-        }
-      }
-    })
+    let roomId = getRoomInClick(x,y);
+    if (roomId && roomId !== SELECTED_ROOM_ID) {
+      changed = true;
+      SELECTED_ROOM_ID = roomId;
+      setRoomSelectionToRoomId(SELECTED_ROOM_ID);
+    }
 
     if (changed) {
       render(true)

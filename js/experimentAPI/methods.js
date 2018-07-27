@@ -41,4 +41,5 @@ function drawCustomElement(x, y, options) {
 }
 
 // let naiveBayesianClassifier = new NaiveBayesian('rssi');
-let naiveBayesianClassifier = new NaiveBayesian('distance');
+// let naiveBayesianClassifier = new NaiveBayesian('distance');
+let naiveBayesianClassifier = new NaiveBayesian('log');

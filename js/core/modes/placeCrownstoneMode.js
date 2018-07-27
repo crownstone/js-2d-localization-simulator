@@ -24,10 +24,8 @@ function initPlaceCrownstoneModeHandler() {
           crownstone.angle = 0;
         }
         crownstone.angle = (crownstone.angle + 45)%360;
-
-        console.log("ANGLE", crownstone)
       }
-    })
+    });
 
     if (!selectedStone) {
       let amountOfCrownstones = CROWNSTONES.length;

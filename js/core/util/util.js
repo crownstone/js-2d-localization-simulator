@@ -73,6 +73,25 @@ function precalculateWallAbsorptionMap() {
   alert("Finished precalculating wall absorption map!")
 }
 
+function showRoomGroundTruth() {
+  let xblockCount = Math.ceil(canvas.width / BLOCK_SIZE);
+  let yblockCount = Math.ceil(canvas.height / BLOCK_SIZE);
+  for (let i = 0; i < xblockCount; i++) {
+    for (let j = 0; j < yblockCount; j++) {
+      let xPx = 0.5*BLOCK_SIZE + i*BLOCK_SIZE;
+      let yPx = 0.5*BLOCK_SIZE + j*BLOCK_SIZE;
+
+      let roomId = getRoomInClick(xPx,yPx);
+      if (roomId === null) {
+        drawSquare(xPx, yPx, BLOCK_SIZE, "rgba(0,0,0,0.6)");
+      }
+      else {
+        drawSquare(xPx, yPx, BLOCK_SIZE, hex2rgba(ROOMS[roomId].color,0.5))
+      }
+    }
+  }
+}
+
 
 function download(data, fileName) {
   var dlAnchorElem = document.getElementById('downloadAnchorElem');

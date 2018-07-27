@@ -72,6 +72,17 @@ function drawDoubleBorderedCircleOnGrid(xInMeters,yInMeters, radius = 10, border
   drawCircleOnGrid(xInMeters,yInMeters, radius, color)
 }
 
+function drawSquare(xInPx,yInPx, size = 10, color ='red') {
+  ctx.beginPath();
+  ctx.fillStyle = color
+  ctx.rect(
+    xInPx - 0.5*size,
+    yInPx - 0.5 * size,
+    size, size);
+  ctx.fill();
+  ctx.closePath();
+}
+
 function drawSquareOnGrid(xInMeters,yInMeters, size = 10, color ='red') {
   ctx.beginPath();
   ctx.fillStyle = color
@@ -142,7 +153,6 @@ function getRssiFromStoneToPoint(stone, x, y, ignoreThreshold = false) {
     distance *= (Number(ATTENUATION_FACTOR) + (1-ATTENUATION_FACTOR) + ATTENUATION_FACTOR*(Math.pow(factor,ATTENUATION)));
   }
   let rssi = getRSSI(distance);
-
 
   if (rssi > RSSI_THRESHOLD || ignoreThreshold === true) {
     if (WALL_RSSI_DROP !== 0) {

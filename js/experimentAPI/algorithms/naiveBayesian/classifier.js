@@ -3,9 +3,11 @@
 class NaiveBayesian {
 
   constructor( type ) {
-    this.distance = false;
+    this.mode = type;
     if (type === 'distance') {
-      this.distance = true;
+      this.MINIMUM_STD = 0.1;
+    }
+    else if (type === 'log') {
       this.MINIMUM_STD = 0.1;
     }
     else {
@@ -16,7 +18,7 @@ class NaiveBayesian {
     this.sampleSize = {};
 
     this.MINIMUM_REQUIRED_SAMPLES = 3;
-    this.PROBABILITY_MINIMUM = 1e-97;
+    this.PROBABILITY_MINIMUM = 1e-297;
   }
 
   summarizeFingerprints(fingerprints) {
@@ -93,16 +95,26 @@ class NaiveBayesian {
 
 
   _processValue(rssi) {
-    if (this.distance) {
+    if (this.mode === 'distance') {
       if (Array.isArray(rssi)) {
         let result = [];
-        rssi.forEach((r) => {
-          result.push(getDistanceFromRssi(r));
-        })
+        for (let i = 0; i < rssi.length; i++) {
+          result.push(getDistanceFromRssi(rssi[i]))
+        }
         return result;
       }
 
       return getDistanceFromRssi(rssi)
+    }
+    if (this.mode === 'log') {
+      if (Array.isArray(rssi)) {
+        let result = [];
+        for (let i = 0; i < rssi.length; i++) {
+          result.push(Math.pow(10,(rssi[i] - 55)/(-10 * 2)))
+        }
+        return result;
+      }
+      return Math.pow(10,(rssi - 55)/(-10 * 2))
     }
     return rssi;
   }
