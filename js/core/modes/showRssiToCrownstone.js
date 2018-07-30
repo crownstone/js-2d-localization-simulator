@@ -18,6 +18,11 @@ function initRSSItoCrownstonesHandler() {
       render(true)
       setTimeout(() => { render() }, 10)
     }
+    else {
+      alert("Check your console for info!");
+      console.log("Clicked @ x,y in meters:", x, y);
+      console.log("Rssi to selected crownstone at that point:", getRssiFromStoneToPoint(selectedCrownstone, x, y, true));
+    }
   }))
 }
 

@@ -6,7 +6,8 @@ function initVisualizeLocationProbabilityHandler() {
 
 
     let changed = false;
-    let roomId = getRoomInClick(x,y);
+    let roomId = getRoomInClick(point.x, point.y);
+    console.log("CLICKED", getRoomInClick(point.x, point.y))
     if (roomId && roomId !== SELECTED_ROOM_ID) {
       changed = true;
       SELECTED_ROOM_ID = roomId;
@@ -16,6 +17,12 @@ function initVisualizeLocationProbabilityHandler() {
     if (changed) {
       render(true)
       setTimeout(() => { render() }, 10)
+    }
+    else {
+      alert("Check your console for info!");
+      console.log("Clicked @ x,y in meters:", x, y);
+      console.log("Clicked @ x,y in pixels:", point.x, point.y);
+      console.log("Rssi vectir at that point:", getRssiFromStonesToPoint(x, y));
     }
   }))
 
