@@ -12,7 +12,7 @@ function evaluateProbabilities( rssiJson ) {
 
 /**
  * This receives an object of training data for all rooms which you can process.
- * @param trainingData  {room-1: { crownstone-1: [-42,-53,-53, ....], crownstone-2: [-42,-53,-53, .... ]}, room-2: ....}
+ * @param trainingData  {room-1: { timestamp: number, data: {crownstone1: rssi, crownstone2, rssi}}, room-2: ....}
  */
 function processTrainingData(trainingData) {
   // console.log('trainingData',trainingData);

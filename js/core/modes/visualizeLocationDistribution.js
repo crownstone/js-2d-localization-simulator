@@ -12,19 +12,21 @@ function generateFingerprints() {
 
   let roomKeys = Object.keys(TRAINING_LOCATIONS);
   roomKeys.forEach((roomId) => {
-    fingerprintSet[roomId] = {};
+    fingerprintSet[roomId] = [];
 
     let trainingPoints = TRAINING_LOCATIONS[roomId];
-    trainingPoints.forEach((point) => {
+    for (let i = 0; i < trainingPoints.length; i++) {
+      let point = trainingPoints[i];
       let sampleVector = getRssiFromStonesToPoint(point.x, point.y);
-      let crownstonesInVector = Object.keys(sampleVector);
-      crownstonesInVector.forEach((crownstoneId) => {
-        if (!fingerprintSet[roomId][crownstoneId]) {
-          fingerprintSet[roomId][crownstoneId] = [];
-        }
-        fingerprintSet[roomId][crownstoneId].push(sampleVector[crownstoneId]);
-      })
-    })
+      fingerprintSet[roomId].push({timestamp:i, data:sampleVector});
+      // let crownstonesInVector = Object.keys(sampleVector);
+      // crownstonesInVector.forEach((crownstoneId) => {
+      //   if (!fingerprintSet[roomId][crownstoneId]) {
+      //     fingerprintSet[roomId][crownstoneId] = [];
+      //   }
+      //   fingerprintSet[roomId][crownstoneId].push(sampleVector[crownstoneId]);
+      // })
+    }
 
   })
 

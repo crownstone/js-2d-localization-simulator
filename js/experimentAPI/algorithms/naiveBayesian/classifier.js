@@ -24,12 +24,28 @@ class NaiveBayesian {
   summarizeFingerprints(fingerprints) {
     let rooms = Object.keys(fingerprints);
 
+    let fingerprintSet = {};
+    rooms.forEach((roomId) => {
+      fingerprintSet[roomId] = {};
+      fingerprints[roomId].forEach((fingerprint) => {
+        let crownstonesInVector = Object.keys(fingerprint.data);
+        crownstonesInVector.forEach((crownstoneId) => {
+          if (!fingerprintSet[roomId][crownstoneId]) {
+            fingerprintSet[roomId][crownstoneId] = [];
+          }
+          fingerprintSet[roomId][crownstoneId].push(fingerprint.data[crownstoneId]);
+        })
+      })
+    });
+
+
+
     rooms.forEach((roomId) => {
       this.fingerprints[roomId] = {};
-      let crownstones = Object.keys(fingerprints[roomId]);
+      let crownstones = Object.keys(fingerprintSet[roomId]);
       crownstones.forEach((stoneId) => {
-        let mean = getMean(this._processValue(fingerprints[roomId][stoneId]))
-        let std = getStd(this._processValue(fingerprints[roomId][stoneId]), mean)
+        let mean = getMean(this._processValue(fingerprintSet[roomId][stoneId]))
+        let std = getStd(this._processValue(fingerprintSet[roomId][stoneId]), mean)
 
         // do not allow small standard deviations
         if (std < this.MINIMUM_STD) {
