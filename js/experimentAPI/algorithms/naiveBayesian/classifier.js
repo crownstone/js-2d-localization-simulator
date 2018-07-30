@@ -140,7 +140,7 @@ class NaiveBayesian {
     if (options && options.color) {
       color = options.color;
     }
-    drawTextOnGrid(this.sampleSize[SELECTED_ROOM_ID], x, y, 0, 0, 9, 'center', color);
+    drawTextOnGrid(this.sampleSize[SELECTED_ROOM_ID], x, y, 0, 0, 8, 'center', color);
   }
 
 

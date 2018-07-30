@@ -8,9 +8,11 @@ function initRSSItoCrownstonesHandler() {
       let p = crownstone.position;
       let mRadius = 30 / METERS_IN_PIXELS;
       if (x >= p.x - mRadius && x <= p.x + mRadius && y >= p.y - mRadius && y < p.y + mRadius) {
-        SELECTED_STONE_ID = crownstone.id;
-        setStoneSelectionToStoneId(SELECTED_STONE_ID);
-        changed = true;
+        if (crownstone.id !== SELECTED_STONE_ID) {
+          SELECTED_STONE_ID = crownstone.id;
+          setStoneSelectionToStoneId(SELECTED_STONE_ID);
+          changed = true;
+        }
       }
     })
 
@@ -19,7 +21,12 @@ function initRSSItoCrownstonesHandler() {
       setTimeout(() => { render() }, 10)
     }
     else {
-      alert("Check your console for info!");
+      let selectedCrownstone = null;
+      CROWNSTONES.forEach((stone) => {
+        if (SELECTED_STONE_ID == stone.id) {
+          selectedCrownstone = stone;
+        }
+      })
       console.log("Clicked @ x,y in meters:", x, y);
       console.log("Rssi to selected crownstone at that point:", getRssiFromStoneToPoint(selectedCrownstone, x, y, true));
     }
