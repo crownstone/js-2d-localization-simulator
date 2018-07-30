@@ -37,6 +37,7 @@ function getFile(filename) {
 
 function loadFromFile(path, success, error) {
   var xhr = new XMLHttpRequest();
+  xhr.overrideMimeType('application/json');
   xhr.onreadystatechange = function() {
     if (xhr.readyState === 4) {
       if (xhr.status === 200) {
