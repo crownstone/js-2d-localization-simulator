@@ -5,8 +5,18 @@
  * @param rssiJson      { crownstoneId1: -53, crownstoneId2: -63, ....}
  * @returns Object      { room-1: [0..1], room-2: [0..1], ... , NO_ROOM: [0..1] }
  */
+let classifier = {};
+//classifier.type = 'bayes';
+classifier.type = 'knn';
+
+if (classifier.type === 'bayes') {
+  classifier.instance = new NaiveBayesian('log');
+} else {
+  classifier.instance = new knn();
+}
+
 function evaluateProbabilities( rssiJson ) {
-  return naiveBayesianClassifier.classify(rssiJson);
+  return classifier.instance.classify(rssiJson);
 }
 
 
@@ -15,8 +25,7 @@ function evaluateProbabilities( rssiJson ) {
  * @param trainingData  {room-1: { timestamp: number, data: {crownstone1: rssi, crownstone2, rssi}}, room-2: ....}
  */
 function processTrainingData(trainingData) {
-  // console.log('trainingData',trainingData);
-  naiveBayesianClassifier.summarizeFingerprints(trainingData);
+  classifier.instance.train(trainingData);
 }
 
 
@@ -25,7 +34,7 @@ function processTrainingData(trainingData) {
  * When this is called, you make sure that your algorithms are cleaned up and ready for a new processTrainingData call
  */
 function clearStoredModels() {
-  naiveBayesianClassifier.clear();
+  classifier.instance.clear();
 }
 
 
@@ -37,9 +46,5 @@ function clearStoredModels() {
  * @param options
  */
 function drawCustomElement(x, y, options) {
-  naiveBayesianClassifier.drawCustomElement(x, y, options)
+  classifier.instance.drawCustomElement(x, y, options)
 }
-
-// let naiveBayesianClassifier = new NaiveBayesian('rssi');
-// let naiveBayesianClassifier = new NaiveBayesian('distance');
-let naiveBayesianClassifier = new NaiveBayesian('log');
