@@ -15,7 +15,7 @@ function initPlaceTrainingDataModeHandler() {
   });
 
   unsubscribeEvents.push(eventBus.on("CanvasClick", (point) => {
-    let {x , y} = pixelsToMeters(point.x, point.y);
+    let {x , y} = pixelsToMeters(point.x, point.y, false);
 
     if (!TRAINING_LOCATIONS[SELECTED_ROOM_ID]) {
       TRAINING_LOCATIONS[SELECTED_ROOM_ID] = [];

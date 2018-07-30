@@ -19,7 +19,6 @@ function initVisualizeLocationProbabilityHandler() {
       setTimeout(() => { render() }, 10)
     }
     else {
-      alert("Check your console for info!");
       console.log("Clicked @ x,y in meters:", x, y);
       console.log("Clicked @ x,y in pixels:", point.x, point.y);
       console.log("Rssi vectir at that point:", getRssiFromStonesToPoint(x, y));

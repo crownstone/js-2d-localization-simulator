@@ -138,6 +138,9 @@ function getRssiFromStoneToPoint(stone, x, y, ignoreThreshold = false) {
   let dx = x - stone.position.x;
   let dy = y - stone.position.y;
   let distance = Math.sqrt(dx*dx + dy*dy);
+  if (distance < 0.05) {
+    distance = 0.05;
+  }
 
   if (ATTENUATION > 0) {
     let stoneAngle = 0;
