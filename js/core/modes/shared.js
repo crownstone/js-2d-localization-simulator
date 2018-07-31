@@ -169,7 +169,7 @@ function getRssiFromStoneToPoint(stone, x, y, ignoreThreshold = false) {
       }
       else {
         let stonePosInPixels = metersToPixels(stone.position.x, stone.position.y)
-        intersectionCount = getAmountOfWallIntersections(targetPosInPixels.x, targetPosInPixels.y, stonePosInPixels.x, stonePosInPixels.y);
+        intersectionCount = checkIntersections(targetPosInPixels.x, targetPosInPixels.y, stonePosInPixels.x, stonePosInPixels.y).length;
 
         if (!WALL_ABSORPTION_MAP[stone.id]) { WALL_ABSORPTION_MAP[stone.id] = {}; }
         if (!WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x]) { WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x] = {};  }

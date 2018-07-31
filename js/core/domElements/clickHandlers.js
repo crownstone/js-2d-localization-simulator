@@ -13,6 +13,7 @@ function canvasClick(e) {
   x -= canvas.offsetLeft;
   y -= canvas.offsetTop;
   eventBus.emit("CanvasClick", {x: x, y: y})
+  console.log("Clicked", x,y)
 }
 
 
