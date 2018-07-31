@@ -12,11 +12,11 @@ class knn {
     //this.threshold = 4;
     //this.threshold = 3000;
     
-    this.distance_type = 'euclidean';
-    this.threshold = 100;
+    //this.distance_type = 'euclidean';
+    //this.threshold = 100;
 
-    //this.distance_type = 'jaccard';
-    //this.threshold = 0.5;
+    this.distance_type = 'jaccard';
+    this.threshold = 2;
   }
 
   /**
@@ -68,13 +68,16 @@ class knn {
 
   /**
    * Can be seen as a distance metric between sets. The values themselves are not taken into account. 
+   * The Jaccard index is the following:
    *   jaccard = |A I B| / |A U B| = |A I B| / (|A| |B| - |A I B|)
    * Here I stands for intersection, and U for union. |.| stands for number of elements in the set.
    *
    * This metric can be used if the number of unique crownstones itself can already be used as a good indication
    * of where a person is. This does not use the RSS values themselves.
+   *
+   * The Jaccard distance is one minus the Jaccard index. Let us use an offset of 1.
    */
-  jaccard_index(set1, set2) {
+  jaccard_distance(set1, set2) {
     let size1 = Object.keys(set1).length;
     let size2 = Object.keys(set2).length;
     let intersection = 0;
@@ -88,7 +91,8 @@ class knn {
       throw new Error("Union should never be zero (at least one input vectors should be non-zero)");
     }
     let result = intersection / union;
-    return result;
+    let offset = 1;
+    return 1 - result + offset;
   }
 
   /**
@@ -102,7 +106,7 @@ class knn {
     if (this.distance_type === 'euclidean') {
       return this.pseudo_euclidean(tuple_array1, tuple_array2, 5); 
     } else if (this.distance_type === 'jaccard') {
-      return this.jaccard_index(tuple_array1, tuple_array2);
+      return this.jaccard_distance(tuple_array1, tuple_array2);
     } else {
       throw new Error("Unknown distance metric");
     }

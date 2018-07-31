@@ -22,7 +22,7 @@ function initVisualizeLocationProbabilityHandler() {
       console.log("Clicked @ x,y in meters:", x, y);
       console.log("Clicked @ x,y in pixels:", point.x, point.y);
       console.log("RSSI vector at this point:", getRssiFromStonesToPoint(x, y));
-      console.log("Probability", evaluateProbabilities(vector));
+      console.log("Probability", evaluateProbabilities(vector, {x,y}));
     }
   }))
 
@@ -80,7 +80,7 @@ function drawProbabilityDistribution() {
 
       let vector = getRssiFromStonesToPoint(x, y);
 
-      let result = evaluateProbabilities(vector);
+      let result = evaluateProbabilities(vector, {x,y});
       results[i].push(result)
 
       let probability = result[SELECTED_ROOM_ID];

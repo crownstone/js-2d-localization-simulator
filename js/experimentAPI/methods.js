@@ -9,8 +9,8 @@ let classifier = new knn();
  * @returns Object      { room-1: [0..1], room-2: [0..1], ... , NO_ROOM: [0..1] }
  */
 
-function evaluateProbabilities( rssiJson ) {
-  return classifier.classify(rssiJson);
+function evaluateProbabilities( rssiJson, debug ) {
+  return classifier.classify(rssiJson, debug);
 }
 
 
