@@ -21,7 +21,8 @@ function initVisualizeLocationProbabilityHandler() {
     else {
       console.log("Clicked @ x,y in meters:", x, y);
       console.log("Clicked @ x,y in pixels:", point.x, point.y);
-      console.log("Rssi vectir at that point:", getRssiFromStonesToPoint(x, y));
+      console.log("RSSI vector at this point:", getRssiFromStonesToPoint(x, y));
+      console.log("Probability", evaluateProbabilities(vector));
     }
   }))
 
