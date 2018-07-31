@@ -2,7 +2,7 @@
 
 function initRSSItoCrownstonesHandler() {
   unsubscribeEvents.push(eventBus.on("CanvasClick", (point) => {
-    let {x , y} = pixelsToMeters(point.x, point.y);
+    let {x , y} = pixelsToMeters(point.x, point.y, false);
     let changed = false;
     CROWNSTONES.forEach((crownstone) => {
       let p = crownstone.position;
@@ -15,6 +15,19 @@ function initRSSItoCrownstonesHandler() {
         }
       }
     })
+
+
+    let selectedStoneIndex = 0;
+    for (let i = 0; i < CROWNSTONES.length; i++) {
+      if (SELECTED_STONE_ID == CROWNSTONES[i].id) {
+        selectedStoneIndex = i;
+        break;
+      }
+    }
+    let position = CROWNSTONES[selectedStoneIndex].position;
+    let posInPx = metersToPixels(position.x, position.y);
+    console.log(checkIntersections(point.x, point.y, posInPx.x, posInPx.y))
+
 
     if (changed) {
       render(true)
