@@ -2,7 +2,7 @@
 
 function initVisualizeLocationProbabilityHandler() {
   unsubscribeEvents.push(eventBus.on("CanvasClick", (point) => {
-    let {x , y} = pixelsToMeters(point.x, point.y);
+    let {x , y} = pixelsToMeters(point.x, point.y, false);
 
 
     let changed = false;
@@ -21,7 +21,7 @@ function initVisualizeLocationProbabilityHandler() {
     else {
       console.log("Clicked @ x,y in meters:", x, y);
       console.log("Clicked @ x,y in pixels:", point.x, point.y);
-      console.log("Rssi vectir at that point:", getRssiFromStonesToPoint(x, y));
+      console.log("Rssi vector at that point:", getRssiFromStonesToPoint(x, y));
     }
   }))
 
@@ -67,9 +67,10 @@ function drawProbabilityDistribution() {
 
   let lowest = 1e9
   let highest = 0
-  let vectors = [];
+  let results = [];
+  console.time("calculation")
   for (let i = 0; i < xblockCount; i++) {
-    vectors.push([])
+    results.push([])
     for (let j = 0; j < yblockCount; j++) {
       let xPx = 0.5 * BLOCK_SIZE + i * BLOCK_SIZE;
       let yPx = 0.5 * BLOCK_SIZE + j * BLOCK_SIZE;
@@ -77,8 +78,9 @@ function drawProbabilityDistribution() {
       let {x, y} = pixelsToMeters(xPx, yPx, false);
 
       let vector = getRssiFromStonesToPoint(x, y);
-      vectors[i].push(vector)
+
       let result = evaluateProbabilities(vector);
+      results[i].push(result)
 
       let probability = result[SELECTED_ROOM_ID];
 
@@ -86,9 +88,10 @@ function drawProbabilityDistribution() {
       highest = Math.max(highest, probability);
     }
   }
+  console.timeEnd('calculation')
 
   let range = highest - lowest;
-
+  console.time("render")
   for (let i = 0; i < xblockCount; i++) {
     for (let j = 0; j < yblockCount; j++) {
       let xPx = 0.5*BLOCK_SIZE + i*BLOCK_SIZE;
@@ -96,9 +99,7 @@ function drawProbabilityDistribution() {
 
       let {x , y} = pixelsToMeters(xPx, yPx, false);
 
-      let vector = vectors[i][j]
-
-      let result = evaluateProbabilities(vector);
+      let result = results[i][j]
 
       let probability = result[SELECTED_ROOM_ID];
 
@@ -128,6 +129,7 @@ function drawProbabilityDistribution() {
       }
     }
   }
+  console.timeEnd("render")
 
   // update 3d graph.
   vis3dDataset.update(data);

@@ -21,7 +21,7 @@ class NaiveBayesian {
     this.PROBABILITY_MINIMUM = 1e-297;
   }
 
-  summarizeFingerprints(fingerprints) {
+  train(fingerprints) {
     let rooms = Object.keys(fingerprints);
 
     let fingerprintSet = {};
