@@ -8,6 +8,8 @@ class knn {
 
     this.trained = false;
 
+    this.crownstone_count;
+
     // beyond this threshold it is considered NO_ROOM
     //this.threshold = 4;
     //this.threshold = 3000;
@@ -15,8 +17,16 @@ class knn {
     //this.distance_type = 'euclidean';
     //this.threshold = 100;
 
-    this.distance_type = 'jaccard';
-    this.threshold = 2;
+   // this.distance_type = 'jaccard';
+  //  this.threshold = 2;
+  
+    this.distance_type = 'smd';
+    this.threshold = 0.1;
+  }
+
+  config(params) {
+    console.log("Set crownstone count to:", params.crownstone_count);
+    this.crownstone_count = params.crownstone_count;
   }
 
   /**
@@ -96,6 +106,32 @@ class knn {
   }
 
   /**
+   * Simple matching distance or 1 - simple matching index. The latter is also known as Rand coefficient.
+   * This metric also awards if the test and train vector both do NOT see a particular Crownstone.
+   */
+  simple_matching_distance(set1, set2) {
+    let size1 = Object.keys(set1).length;
+    let size2 = Object.keys(set2).length;
+    let tt = 0, tf = 0, ft = 0;
+    for (let key in set1) {
+      if (set2[key]) {
+        tt++;
+      } else {
+        tf++;
+      }
+    }
+    for (let key in set2) {
+      if (!set1[key]) {
+        ft++;
+      }
+    }
+    let n = this.crownstone_count;
+    let ff = n - (tf + ft + tt);
+    let result = (ff + tt) / n;
+    return 1 - result; 
+  }
+
+  /**
    * At a particular location X we will see crownstones c0, c1, c2, each with RSSI values. For some of the 
    * combinations we have a label Y (room label). The distance vector should be able to compare location x0 with
    * location x1. 
@@ -107,6 +143,8 @@ class knn {
       return this.pseudo_euclidean(tuple_array1, tuple_array2, 5); 
     } else if (this.distance_type === 'jaccard') {
       return this.jaccard_distance(tuple_array1, tuple_array2);
+    } else if (this.distance_type === 'smd') {
+      return this.simple_matching_distance(tuple_array1, tuple_array2);
     } else {
       throw new Error("Unknown distance metric");
     }
@@ -180,10 +218,11 @@ class knn {
       console.error("Error: roomId should always be defined and non-zero", minimal_distance);
       probabilities['NO_ROOM'] = 1
     } else {
-      //probabilities[minimal_distance.roomId] = Math.log((this.threshold - minimal_distance.distance) + 0.01);
-      //console.log("Distance:", minimal_distance.distance);
-      probabilities[minimal_distance.roomId] = minimal_distance.distance;
+      // assume distance to be between 0 and Infinity, then we map to a pseudo-probability between 1 and 0.
+      probabilities[minimal_distance.roomId] = 1 - Math.atan( minimal_distance.distance );
     }
+    probabilities['room'] = minimal_distance.roomId;
+    probabilities['distance'] = minimal_distance.distance;
     let sum = 0;
     for (let key in probabilities) {
       sum += probabilities[key];

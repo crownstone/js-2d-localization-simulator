@@ -21,7 +21,8 @@ function initVisualizeLocationProbabilityHandler() {
     else {
       console.log("Clicked @ x,y in meters:", x, y);
       console.log("Clicked @ x,y in pixels:", point.x, point.y);
-      console.log("RSSI vector at this point:", getRssiFromStonesToPoint(x, y));
+      let vector = getRssiFromStonesToPoint(x, y);
+      console.log("RSSI vector at this point:", vector);
       console.log("Probability", evaluateProbabilities(vector, {x,y}));
     }
   }))
@@ -29,6 +30,8 @@ function initVisualizeLocationProbabilityHandler() {
 
   generateFingerprints();
   clearStoredModels()
+  let params = {}; params.crownstone_count = CROWNSTONES.length;
+  configClassifier(params);
   processTrainingData(generateFingerprints());
 }
 

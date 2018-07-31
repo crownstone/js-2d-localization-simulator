@@ -4,6 +4,8 @@ function initVisualizeLocationHandler() {
   generateFingerprints();
 
   clearStoredModels()
+  let params = {}; params.crownstone_count = CROWNSTONES.length;
+  configClassifier(params);
   processTrainingData(generateFingerprints());
 }
 

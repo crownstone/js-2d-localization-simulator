@@ -1,6 +1,18 @@
 // let classifier = new NaiveBayesian('rssi');
 let classifier = new knn();
 
+function configClassifier(params) {
+  classifier.config(params);
+}
+
+/**
+ * This receives an object of training data for all rooms which you can process.
+ * @param trainingData  {room-1: { timestamp: number, data: {crownstone1: rssi, crownstone2, rssi}}, room-2: ....}
+ */
+function processTrainingData(trainingData) {
+  classifier.train(trainingData);
+}
+
 /**
  * This receives a vector of RSSI measurements for each active crownstone.
  *
@@ -13,24 +25,12 @@ function evaluateProbabilities( rssiJson, debug ) {
   return classifier.classify(rssiJson, debug);
 }
 
-
-/**
- * This receives an object of training data for all rooms which you can process.
- * @param trainingData  {room-1: { timestamp: number, data: {crownstone1: rssi, crownstone2, rssi}}, room-2: ....}
- */
-function processTrainingData(trainingData) {
-  classifier.train(trainingData);
-}
-
-
-
 /**
  * When this is called, you make sure that your algorithms are cleaned up and ready for a new processTrainingData call
  */
 function clearStoredModels() {
   classifier.clear();
 }
-
 
 /**
  * Draw a custom element on the box. X and Y are in meters so all the canvas methods that draw to grid can be used.
