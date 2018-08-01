@@ -58,7 +58,11 @@ function loadFromFile(path, success, error) {
   xhr.send();
 }
 
+
+
 function precalculateWallAbsorptionMap() {
+  console.time("precalculateWallAbsorptionMap")
+  precalcWalls();
   resetWallAbsorptionMap()
   let xblockCount = Math.ceil(canvas.width / BLOCK_SIZE);
   let yblockCount = Math.ceil(canvas.height / BLOCK_SIZE);
@@ -72,8 +76,9 @@ function precalculateWallAbsorptionMap() {
       getRssiFromStonesToPoint(x,y, true);
     }
   }
-  console.log("HE", WALL_ABSORPTION_MAP)
-  // alert("Finished precalculating wall absorption map!")
+  // console.log("WALL_ABSORPTION_MAP", WALL_ABSORPTION_MAP)
+  alert("Finished precalculating wall absorption map!")
+  console.timeEnd("precalculateWallAbsorptionMap")
 }
 
 function showRoomGroundTruth() {

@@ -11,7 +11,8 @@
     "rssiThreshold": -98,
     "attenuation": 10,
     "attenuationFactor": 0.75,
-    "wallRssiDrop": -5
+    "wallRssiDropPerDm": -5,
+    "wallThicknessCm": 10
   },
   "gui": {
     "autoRedrawGraph3d": false

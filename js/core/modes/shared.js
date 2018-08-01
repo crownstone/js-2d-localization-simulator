@@ -37,6 +37,16 @@ function drawTextOnGrid(text, xInMeters, yInMeters, xPxOffset = 0, yPxOffset = 0
   )
 }
 
+function drawLine(x1InPx, y1InPx, x2InPx, y2InPx, width = 1, strokeStyle = "#f00") {
+  ctx.beginPath();
+  ctx.moveTo(x1InPx, y1InPx);
+  ctx.lineTo(x2InPx, y2InPx);
+  ctx.lineWidth = width;
+  ctx.strokeStyle = strokeStyle
+
+  ctx.stroke();
+}
+
 function drawLineOnGrid(x1InMeters, y1InMeters, x2InMeters, y2InMeters, width = 1, strokeStyle = "#f00") {
   ctx.beginPath();
   ctx.moveTo(
@@ -158,25 +168,25 @@ function getRssiFromStoneToPoint(stone, x, y, ignoreThreshold = false) {
   let rssi = getRSSI(distance);
 
   if (rssi > RSSI_THRESHOLD || ignoreThreshold === true) {
-    if (WALL_RSSI_DROP !== 0) {
-      let intersectionCount = 0;
+    if (WALL_RSSI_DROP_PER_DM !== 0) {
+      let intersectionMeters = 0;
       let targetPosInPixels = metersToPixels(x, y)
       if (
         WALL_ABSORPTION_MAP[stone.id] &&
         WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x] &&
         WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x][targetPosInPixels.y] !== undefined ) {
-        intersectionCount = WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x][targetPosInPixels.y];
+        intersectionMeters = WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x][targetPosInPixels.y];
       }
       else {
         let stonePosInPixels = metersToPixels(stone.position.x, stone.position.y)
-        intersectionCount = checkIntersections(targetPosInPixels.x, targetPosInPixels.y, stonePosInPixels.x, stonePosInPixels.y).length;
+        intersectionMeters = checkIntersections(targetPosInPixels.x, targetPosInPixels.y, stonePosInPixels.x, stonePosInPixels.y);
 
         if (!WALL_ABSORPTION_MAP[stone.id]) { WALL_ABSORPTION_MAP[stone.id] = {}; }
         if (!WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x]) { WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x] = {};  }
-        WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x][targetPosInPixels.y] = intersectionCount;
+        WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x][targetPosInPixels.y] = intersectionMeters;
       }
 
-      rssi += WALL_RSSI_DROP * intersectionCount;
+      rssi += WALL_RSSI_DROP_PER_DM * intersectionMeters * 10;
       // drawTextOnGrid(intersectionCount, x,y)
     }
 

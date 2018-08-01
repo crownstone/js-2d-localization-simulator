@@ -72,7 +72,6 @@ function drawProbabilityDistribution() {
   let lowest = 1e9
   let highest = 0
   let results = [];
-  console.time("calculation")
   for (let i = 0; i < xblockCount; i++) {
     results.push([])
     for (let j = 0; j < yblockCount; j++) {
@@ -92,10 +91,8 @@ function drawProbabilityDistribution() {
       highest = Math.max(highest, probability);
     }
   }
-  console.timeEnd('calculation')
 
   let range = highest - lowest;
-  console.time("render")
   for (let i = 0; i < xblockCount; i++) {
     for (let j = 0; j < yblockCount; j++) {
       let xPx = 0.5*BLOCK_SIZE + i*BLOCK_SIZE;
@@ -133,7 +130,6 @@ function drawProbabilityDistribution() {
       }
     }
   }
-  console.timeEnd("render")
 
   // update 3d graph.
   vis3dDataset.update(data);

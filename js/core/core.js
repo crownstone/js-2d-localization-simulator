@@ -23,7 +23,8 @@ function coreInit() {
       }
     })
     .then(() => {
-      render();
+      render()
+      // showRoomGroundTruth()
     })
 }
 
@@ -35,6 +36,7 @@ function resetWallAbsorptionMap() {
   WALL_ABSORPTION_MAP['metersInPixels'] = METERS_IN_PIXELS;
   WALL_ABSORPTION_MAP['forRooms'] = JSON.stringify(ROOMS);
   WALL_ABSORPTION_MAP['forCrownstones'] = JSON.stringify(CROWNSTONES);
+  WALL_ABSORPTION_MAP['forThickness'] = WALL_THICKNESS_CM;
 }
 
 
@@ -62,17 +64,20 @@ function loadConfig() {
       .then((data) => {
         let settings = JSON.parse(data);
 
-        AUTO_REDRAW_GRAPH3D = settings.gui.autoRedrawGraph3d;
-        WALL_RSSI_DROP = settings.system.wallRssiDrop;
-        ATTENUATION = settings.system.attenuation;
-        ATTENUATION_FACTOR = settings.system.attenuationFactor;
-        N_VALUE = settings.system.nValue;
-        CALIBRATION_VALUE = settings.system.calibrationValueAt1Meter;
-        RSSI_THRESHOLD = settings.system.rssiThreshold;
-        COLOR_BANDS = settings.canvas.colorBands;
-        BLOCK_SIZE = settings.canvas.blockSizeInPixels; // px
-        METERS_IN_PIXELS = settings.canvas.meterToPixels;
-        PADDING_IN_METERS = settings.canvas.paddingInMeters;
+        AUTO_REDRAW_GRAPH3D   = settings.gui.autoRedrawGraph3d;
+
+        WALL_THICKNESS_CM     = settings.system.wallThicknessCm;
+        WALL_RSSI_DROP_PER_DM = settings.system.wallRssiDropPerDm;
+        ATTENUATION           = settings.system.attenuation;
+        ATTENUATION_FACTOR    = settings.system.attenuationFactor;
+        N_VALUE               = settings.system.nValue;
+        CALIBRATION_VALUE     = settings.system.calibrationValueAt1Meter;
+        RSSI_THRESHOLD        = settings.system.rssiThreshold;
+
+        COLOR_BANDS           = settings.canvas.colorBands;
+        BLOCK_SIZE            = settings.canvas.blockSizeInPixels; // px
+        METERS_IN_PIXELS      = settings.canvas.meterToPixels;
+        PADDING_IN_METERS     = settings.canvas.paddingInMeters;
 
       }).catch((err) => { console.warn('Error in getting settings:', err) })
   );

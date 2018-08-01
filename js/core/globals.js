@@ -6,11 +6,12 @@
     let N_VALUE = 4.0;
     let CALIBRATION_VALUE = -55;
     let RSSI_THRESHOLD = -95;
-    let WALL_RSSI_DROP = 10;  // db
+    let WALL_RSSI_DROP_PER_DM = -5;  // db
     let COLOR_BANDS = 15;
     let BLOCK_SIZE = 20; // px
     let METERS_IN_PIXELS = 0;
     let PADDING_IN_METERS = 0;
+    let WALL_THICKNESS_CM = 0;
 /** CHANGE THESE VALUES IN CONFIG.JSON **/
 // ------------------------------------ //
 

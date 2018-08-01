@@ -30,25 +30,65 @@ function evenOddCheck(xPx, yPx, room) {
   return c
 }
 
-let ALL_LINES = [];
 
-function checkIntersections(startXpx, startYpy, xPx,yPx) {
+let ROOMS_WALLS_PRECALC = {}
+let ROOMS_PRECALCULATED = false;
+function precalcWalls() {
   let roomIds = Object.keys(ROOMS);
 
-  ALL_LINES = [];
+  let walls = [];
   for (let i = 0; i < roomIds.length; i++) {
     let roomCorners = ROOMS[roomIds[i]].corners;
-    
+
     if (roomCorners.length > 0) {
       for (let j = 1; j < roomCorners.length; j++) {
-        ALL_LINES.push([roomCorners[j - 1], roomCorners[j]])
+        walls.push({lineM:[roomCorners[j - 1], roomCorners[j]]})
       }
 
-      ALL_LINES.push([roomCorners[roomCorners.length - 1], roomCorners[0]])
+      walls.push({lineM:[roomCorners[roomCorners.length - 1], roomCorners[0]]})
     }
   }
 
-  return _checkIntersections(startXpx,startYpy,xPx,yPx, ALL_LINES);
+  let thickness = 0.01*WALL_THICKNESS_CM*METERS_IN_PIXELS;
+  for (let i = 0; i < walls.length; i++) {
+    let wall = walls[i]
+    let c1 = metersToPixels(wall.lineM[0].x,wall.lineM[0].y);
+    let c2 = metersToPixels(wall.lineM[1].x,wall.lineM[1].y);
+    wall.linePx = [c1,c2]
+
+    let minX = Math.min(c1.x, c2.x) - 0.5*thickness;
+    let maxX = Math.max(c1.x, c2.x) + 0.5*thickness;
+    let minY = Math.min(c1.y, c2.y) - 0.5*thickness;
+    let maxY = Math.max(c1.y, c2.y) + 0.5*thickness;
+
+    let rect = getRect(c1,c2,0.5*thickness);
+    let rectSurface = getSurfaceOfRect(rect) + 10;  // +10 to avoid rounding errors
+
+    let triangles = [
+      [null, rect[0], rect[1]],
+      [null, rect[0], rect[2]],
+      [null, rect[2], rect[3]],
+      [null, rect[3], rect[1]],
+    ]
+
+    wall.minX = minX;
+    wall.maxX = maxX;
+    wall.minY = minY;
+    wall.maxY = maxY;
+
+    wall.rectSurface = rectSurface;
+    wall.triangles = triangles;
+  }
+  ROOMS_PRECALCULATED = true;
+  ROOMS_WALLS_PRECALC = walls;
+}
+
+
+function checkIntersections(startXpx, startYpy, xPx,yPx) {
+  if (!ROOMS_PRECALCULATED) {
+    precalcWalls()
+  }
+  return _checkIntersections(startXpx,startYpy,xPx,yPx, ROOMS_WALLS_PRECALC);
 }
 
 
@@ -60,94 +100,98 @@ function checkIntersections(startXpx, startYpy, xPx,yPx) {
  * @param pairsOfPoints    || array of lines
  * @returns {Array}
  */
-function _checkIntersections(startX, startY, targetX, targetY, pairsOfPoints) {
-  let intersectionPoints = [];
+function _checkIntersections(startX, startY, targetX, targetY, walls) {
+  // let intersectionPoints = [];
+  let thickness = 0.01*WALL_THICKNESS_CM*METERS_IN_PIXELS;
+  let stepSize = 0.95*thickness;
 
-  let padding = 0.4*BLOCK_SIZE;
-  let stepSize = padding;
+  let ddx = targetX - startX;
+  let ddy = targetY - startY;
+  let distance = Math.sqrt(ddx*ddx + ddy*ddy);
+  let fx = ddx < 0 ? -1 : 1
+  let fy = ddy < 0 ? -1 : 1
 
-  let dx = targetX - startX;
-  let dy = targetY - startY;
-  let distance = Math.sqrt(dx*dx + dy*dy);
-  let stepCount = Math.floor( distance / stepSize );
+  let baseStepSizeX = (stepSize * ddx / distance);
+  let baseStepSizeY = (stepSize * ddy / distance);
 
-  let stepSizeX = (stepSize * dx / distance);
-  let stepSizeY = (stepSize * dy / distance);
-
-  let checkIntersectionWithWall = function(triangles, rect, rectSurface) {
-    let triangleSurface = getSurfaceOfTriangleArray(triangles);
-    if (triangleSurface < rectSurface) {
-      // the point is in the rectangle!
-      return true;
-    }
-    return false;
-  }
-
-
-  let checkWall = (stepX, stepY, c1, c2) => {
-    let minX = Math.min(c1.x, c2.x) - padding;
-    let maxX = Math.max(c1.x, c2.x) + padding;
-    let minY = Math.min(c1.y, c2.y) - padding;
-    let maxY = Math.max(c1.y, c2.y) + padding;
-
-
-    if (!(stepX >= minX && stepX <= maxX && stepY >= minY && stepY <= maxY)) {
-      return false;
-    }
-
-    let rect = getRect(c1,c2,padding);
-    let rectSurface = getSurfaceOfRect(rect) + 10;  // +10 to avoid rounding errors
-    let triangles = [
-      [null, rect[0], rect[1]],
-      [null, rect[0], rect[2]],
-      [null, rect[2], rect[3]],
-      [null, rect[3], rect[1]],
-    ];
-
-    triangles[0][0] = {x: stepX, y: stepY};
-    triangles[1][0] = {x: stepX, y: stepY};
-    triangles[2][0] = {x: stepX, y: stepY};
-    triangles[3][0] = {x: stepX, y: stepY};
-
-    if (checkIntersectionWithWall(triangles, rect, rectSurface)) {
-      return true
-    }
-
-    return false;
-  }
-
+  let stepSizeX = baseStepSizeX;
+  let stepSizeY = baseStepSizeY;
 
   let previouslyInWall = false;
   let stepX = startX;
   let stepY = startY;
-  for (let i = 0; i < stepCount; i++) {
+
+  let previousStepX = null;
+  let previousStepY = null;
+  let wallDistance = 0;
+
+  let count = 0;
+  let shrunk = false;
+
+  while (fx*(stepX - targetX) < 0 || fy*(stepY - targetY) < 0) {
+    count++;
+    if (count > 1000) { break }
+
     let inWall = false;
     stepX += stepSizeX;
     stepY += stepSizeY;
 
-    let c1, c2;
-    // console.log(pairsOfPoints)
-    for (let k = 0; k < pairsOfPoints.length; k++) {
-      c1 = metersToPixels(pairsOfPoints[k][0].x,pairsOfPoints[k][0].y);
-      c2 = metersToPixels(pairsOfPoints[k][1].x,pairsOfPoints[k][1].y);
+    for (let k = 0; k < walls.length; k++) {
+      let wall = walls[k];
+      if (!(stepX >= wall.minX && stepX <= wall.maxX && stepY >= wall.minY && stepY <= wall.maxY)) {
+        continue;
+      }
+      wall.triangles[0][0] = {x: stepX, y: stepY};
+      wall.triangles[1][0] = {x: stepX, y: stepY};
+      wall.triangles[2][0] = {x: stepX, y: stepY};
+      wall.triangles[3][0] = {x: stepX, y: stepY};
 
-      if (checkWall(stepX, stepY, c1, c2)) {
+      // drawLine(wall.linePx[0].x, wall.linePx[0].y, wall.linePx[1].x, wall.linePx[1].y, thickness, 'rgba(255,0,0,0.1)' )
+
+      let triangleSurface = getSurfaceOfTriangleArray(wall.triangles);
+      if (triangleSurface < wall.rectSurface) {
         inWall = true;
         break;
       }
-
-      // let m1 = pixelsToMeters(c1.x, c1.y, false);
-      // let m2 = pixelsToMeters(c2.x, c2.y, false);
-      // drawLineOnGrid(m1.x, m1.y, m2.x, m2.y, 10, )
     }
 
+
+    // adaptive stepsize
+    if (inWall && !previouslyInWall && shrunk == false) {
+      // step back, enter w small steps
+      if (previousStepX) {
+        stepX = previousStepX;
+        stepY = previousStepY;
+      }
+
+      // enter wall
+      stepSizeX = 0.2*baseStepSizeX;
+      stepSizeY = 0.2*baseStepSizeY;
+
+      shrunk = true;
+      continue;
+    }
+    else if (!inWall && previouslyInWall) {
+      shrunk = false;
+      // exit wall
+      stepSizeX = baseStepSizeX;
+      stepSizeY = baseStepSizeY;
+    }
+
+
     if (inWall) {
+      if (previousStepX) {
+        let dx = previousStepX - stepX;
+        let dy = previousStepY - stepY;
+        wallDistance += Math.sqrt(dx*dx + dy*dy);
+      }
+
       // let m = pixelsToMeters(stepX, stepY, false);
       // drawCircleOnGrid(m.x, m.y, 2, '#0f0');
     }
     else {
       if (previouslyInWall === true) {
-        intersectionPoints.push([stepX, stepY]);
+        // intersectionPoints.push([stepX, stepY]);
         // let m = pixelsToMeters(stepX, stepY, false);
         // drawCircleOnGrid(m.x, m.y, 10, '#F0f');
       }
@@ -156,11 +200,12 @@ function _checkIntersections(startX, startY, targetX, targetY, pairsOfPoints) {
       // drawCircleOnGrid(m.x, m.y, 1, '#00f');
     }
 
-
+    previousStepX = stepX;
+    previousStepY = stepY;
     previouslyInWall = inWall;
   }
   
-  return intersectionPoints;
+  return wallDistance / METERS_IN_PIXELS;
 }
 
 
