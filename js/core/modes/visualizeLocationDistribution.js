@@ -1,17 +1,17 @@
 
 
 function initVisualizeLocationHandler() {
-  generateFingerprints();
-
   clearStoredModels()
-  let params = {}; params.crownstone_count = CROWNSTONES.length;
-  configClassifier(params);
-  processTrainingData(generateFingerprints());
+  processTrainingData(prepareDataForClassifiers());
 }
 
-function generateFingerprints() {
-  let fingerprintSet = {};
+function prepareDataForClassifiers() {
+  // load config into classifiers
+  let params = {}; params.crownstone_count = CROWNSTONES.length;
+  configClassifier(params);
 
+  // create fingerprint sets
+  let fingerprintSet = {};
   let roomKeys = Object.keys(TRAINING_LOCATIONS);
   roomKeys.forEach((roomId) => {
     fingerprintSet[roomId] = [];
@@ -21,15 +21,7 @@ function generateFingerprints() {
       let point = trainingPoints[i];
       let sampleVector = getRssiFromStonesToPoint(point.x, point.y);
       fingerprintSet[roomId].push({timestamp:i, data:sampleVector});
-      // let crownstonesInVector = Object.keys(sampleVector);
-      // crownstonesInVector.forEach((crownstoneId) => {
-      //   if (!fingerprintSet[roomId][crownstoneId]) {
-      //     fingerprintSet[roomId][crownstoneId] = [];
-      //   }
-      //   fingerprintSet[roomId][crownstoneId].push(sampleVector[crownstoneId]);
-      // })
     }
-
   })
 
   return fingerprintSet;

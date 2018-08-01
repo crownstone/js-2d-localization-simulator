@@ -27,12 +27,8 @@ function initVisualizeLocationProbabilityHandler() {
     }
   }))
 
-
-  generateFingerprints();
   clearStoredModels()
-  let params = {}; params.crownstone_count = CROWNSTONES.length;
-  configClassifier(params);
-  processTrainingData(generateFingerprints());
+  processTrainingData(prepareDataForClassifiers());
 }
 
 
@@ -72,6 +68,7 @@ function drawProbabilityDistribution() {
   let lowest = 1e9
   let highest = 0
   let results = [];
+  console.time("Calculation")
   for (let i = 0; i < xblockCount; i++) {
     results.push([])
     for (let j = 0; j < yblockCount; j++) {
@@ -91,7 +88,8 @@ function drawProbabilityDistribution() {
       highest = Math.max(highest, probability);
     }
   }
-
+  console.timeEnd("Calculation")
+  console.time("Render")
   let range = highest - lowest;
   for (let i = 0; i < xblockCount; i++) {
     for (let j = 0; j < yblockCount; j++) {
@@ -130,6 +128,7 @@ function drawProbabilityDistribution() {
       }
     }
   }
+  console.timeEnd("Render")
 
   // update 3d graph.
   vis3dDataset.update(data);
