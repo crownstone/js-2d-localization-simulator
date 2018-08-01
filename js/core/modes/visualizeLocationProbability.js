@@ -98,7 +98,12 @@ function drawProbabilityDistribution() {
 
       let {x , y} = pixelsToMeters(xPx, yPx, false);
 
-      let result = results[i][j]
+      let result = results[i][j];
+      // if we draw custom elements, we have to do the calculation twice.
+      if (window.DRAW_CUSTOM_ELEMENTS === true) {
+        let vector = getRssiFromStonesToPoint(x, y);
+        result = evaluateProbabilities(vector, {x,y});
+      }
 
       let probability = result[SELECTED_ROOM_ID];
 
@@ -124,7 +129,9 @@ function drawProbabilityDistribution() {
         let color = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (factor * (1 - minOpacity) + minOpacity) + ')';
         drawSquareOnGrid(x, y, BLOCK_SIZE, color);
 
-        drawCustomElement(x,y)
+        if (window.DRAW_CUSTOM_ELEMENTS === true) {
+          drawCustomElement(x, y)
+        }
       }
     }
   }

@@ -12,6 +12,7 @@
     let METERS_IN_PIXELS = 0;
     let PADDING_IN_METERS = 0;
     let WALL_THICKNESS_CM = 0;
+    let DRAW_CUSTOM_ELEMENTS = false;
 /** CHANGE THESE VALUES IN CONFIG.JSON **/
 // ------------------------------------ //
 

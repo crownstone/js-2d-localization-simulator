@@ -18,7 +18,11 @@ class NaiveBayesian {
     this.sampleSize = {};
 
     this.MINIMUM_REQUIRED_SAMPLES = 3;
-    this.PROBABILITY_MINIMUM = 1e-297;
+    this.PROBABILITY_MINIMUM = 1e-2;
+  }
+
+  config() {
+    window.DRAW_CUSTOM_ELEMENTS = true;
   }
 
   train(fingerprints) {
@@ -37,7 +41,6 @@ class NaiveBayesian {
         })
       })
     });
-
 
 
     rooms.forEach((roomId) => {
@@ -77,8 +80,6 @@ class NaiveBayesian {
           sampleCount++;
         }
       });
-
-
 
       // require at least 2 samples in a fingerprint
       if (sampleCount >= this.MINIMUM_REQUIRED_SAMPLES) {

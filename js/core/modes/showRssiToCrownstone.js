@@ -135,7 +135,7 @@ function drawRssiToCrownstone() {
         data.push({
           x: i * BLOCK_SIZE + 0.5 * BLOCK_SIZE,
           y: -j * BLOCK_SIZE + 0.5 * BLOCK_SIZE,
-          z: rssi,
+          z: Math.max(-110,rssi),
           style: 0
         })
 
@@ -144,7 +144,7 @@ function drawRssiToCrownstone() {
         data.push({
           x: i * BLOCK_SIZE + 0.5 * BLOCK_SIZE,
           y: -j * BLOCK_SIZE + 0.5 * BLOCK_SIZE,
-          z: rssi,
+          z: Math.max(-110,rssi),
           style: graph3d_factor
         })
 
@@ -152,7 +152,7 @@ function drawRssiToCrownstone() {
         let rawFactor = (rssi - thresholdedLowest) / range;
         let factor = Math.min(1,Math.max(0,rawFactor));
 
-        factor = Math.round(factor*COLOR_BANDS)*1/COLOR_BANDS
+        factor = Math.round(factor*COLOR_BANDS)*1/COLOR_BANDS;
 
         let rgb = hsv2rgb((1-factor) * 270, 1, 1);
         let minOpacity = 0.3;

@@ -1,5 +1,5 @@
-// let classifier = new NaiveBayesian('rssi');
-let classifier = new knn();
+let classifier = new NaiveBayesian('rssi');
+// let classifier = new knn();
 
 function configClassifier(params) {
   classifier.config(params);

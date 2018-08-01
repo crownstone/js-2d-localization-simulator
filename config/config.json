@@ -15,6 +15,7 @@
     "wallThicknessCm": 10
   },
   "gui": {
-    "autoRedrawGraph3d": false
+    "autoRedrawGraph3d": false,
+    "drawCustomElements": false
   }
 }

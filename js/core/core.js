@@ -65,6 +65,7 @@ function loadConfig() {
         let settings = JSON.parse(data);
 
         AUTO_REDRAW_GRAPH3D   = settings.gui.autoRedrawGraph3d;
+        DRAW_CUSTOM_ELEMENTS  = settings.gui.drawCustomElements;
 
         WALL_THICKNESS_CM     = settings.system.wallThicknessCm;
         WALL_RSSI_DROP_PER_DM = settings.system.wallRssiDropPerDm;
