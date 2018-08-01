@@ -62,6 +62,9 @@ function loadFromFile(path, success, error) {
 
 function precalculateWallAbsorptionMap() {
   console.time("precalculateWallAbsorptionMap")
+  // we need to set the WALL_RSSI_DROP_PER_DM to something other than 0, else we dont get a map.
+  let tmp = WALL_RSSI_DROP_PER_DM;
+  WALL_RSSI_DROP_PER_DM = -5;
   precalcWalls();
   resetWallAbsorptionMap()
   let xblockCount = Math.ceil(canvas.width / BLOCK_SIZE);
@@ -76,6 +79,7 @@ function precalculateWallAbsorptionMap() {
       getRssiFromStonesToPoint(x,y, true);
     }
   }
+  WALL_RSSI_DROP_PER_DM = tmp;
   // console.log("WALL_ABSORPTION_MAP", WALL_ABSORPTION_MAP)
   alert("Finished precalculating wall absorption map!")
   console.timeEnd("precalculateWallAbsorptionMap")

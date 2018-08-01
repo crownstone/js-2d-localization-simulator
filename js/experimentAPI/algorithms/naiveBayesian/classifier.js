@@ -16,9 +16,10 @@ class NaiveBayesian {
 
     this.fingerprints = {};
     this.sampleSize = {};
+    this.probability = {};
 
     this.MINIMUM_REQUIRED_SAMPLES = 3;
-    this.PROBABILITY_MINIMUM = 1e-2;
+    this.PROBABILITY_MINIMUM = 1e-4;
   }
 
   config() {
@@ -69,7 +70,7 @@ class NaiveBayesian {
       let crownstones = Object.keys(this.fingerprints[roomId]);
       let probability = 1;
       let sampleCount = 0;
-      // let amountOfStonesInFingerprint = Object.keys(this.fingerprints[roomId]).length;
+      let amountOfStonesInFingerprint = Object.keys(this.fingerprints[roomId]).length;
       crownstones.forEach((stoneId) => {
         if (inputVector[stoneId] !== undefined) {
           let measuredValue = this._processValue(inputVector[stoneId]);
@@ -100,8 +101,13 @@ class NaiveBayesian {
     })
 
     if (acceptableProbability === false) {
-      probabilities['NO_ROOM'] = 1
+      probabilities['NO_ROOM'] = 1;
+      // rooms.forEach((roomId) => {
+      //   probabilities[roomId] = 0;
+      // })
     }
+
+    this.probability = probabilities;
 
     return probabilities;
   }
@@ -141,6 +147,11 @@ class NaiveBayesian {
     if (options && options.color) {
       color = options.color;
     }
+    if (this.probability[SELECTED_ROOM_ID] < this.PROBABILITY_MINIMUM && this.probability[SELECTED_ROOM_ID] > 0) {
+      drawSquareOnGrid(x, y, BLOCK_SIZE, 'rgba(0,0,0,0.8)');
+      color = "#fff"
+    }
+
     drawTextOnGrid(this.sampleSize[SELECTED_ROOM_ID], x, y, 0, 0, 8, 'center', color);
   }
 

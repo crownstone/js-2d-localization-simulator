@@ -100,6 +100,10 @@ function loadConfig() {
             alert("This wall absorption map is for a different Crownstone configuration. Resetting it.")
             resetWallAbsorptionMap()
           }
+          if (WALL_ABSORPTION_MAP.forThickness !== WALL_THICKNESS_CM) {
+            alert("Wall absorption map is for wall thickness. Resetting it.");
+            resetWallAbsorptionMap()
+          }
 
         }).catch((err) => {
           resetWallAbsorptionMap()

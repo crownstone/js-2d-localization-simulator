@@ -168,6 +168,7 @@ function getRssiFromStoneToPoint(stone, x, y, ignoreThreshold = false) {
   let rssi = getRSSI(distance);
 
   if (rssi > RSSI_THRESHOLD || ignoreThreshold === true) {
+
     if (WALL_RSSI_DROP_PER_DM !== 0) {
       let intersectionMeters = 0;
       let targetPosInPixels = metersToPixels(x, y)
@@ -187,7 +188,14 @@ function getRssiFromStoneToPoint(stone, x, y, ignoreThreshold = false) {
       }
 
       rssi += WALL_RSSI_DROP_PER_DM * intersectionMeters * 10;
-      // drawTextOnGrid(intersectionCount, x,y)
+      // drawTextOnGrid(intersectionMeters, x,y)
+
+      if (rssi > RSSI_THRESHOLD || ignoreThreshold === true) {
+        return rssi;
+      }
+      else {
+        return null;
+      }
     }
 
     return rssi;

@@ -6,8 +6,8 @@
     "colorBands": 15
   },
   "system": {
-    "calibrationValueAt1Meter": -60,
-    "nValue": 4,
+    "calibrationValueAt1Meter": -55,
+    "nValue": 3.5,
     "rssiThreshold": -98,
     "attenuation": 10,
     "attenuationFactor": 0.75,

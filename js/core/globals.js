@@ -6,11 +6,12 @@
     let N_VALUE = 4.0;
     let CALIBRATION_VALUE = -55;
     let RSSI_THRESHOLD = -95;
-    let WALL_RSSI_DROP_PER_DM = -5;  // db
     let COLOR_BANDS = 15;
     let BLOCK_SIZE = 20; // px
     let METERS_IN_PIXELS = 0;
     let PADDING_IN_METERS = 0;
+
+    let WALL_RSSI_DROP_PER_DM = -5;  // db
     let WALL_THICKNESS_CM = 0;
     let DRAW_CUSTOM_ELEMENTS = false;
 /** CHANGE THESE VALUES IN CONFIG.JSON **/
@@ -24,6 +25,9 @@ let GRAPH3D = null;
 let vis3dDataset = new vis.DataSet();
 let SELECTED_ROOM_ID = null
 let SELECTED_STONE_ID = null
+
+
+let DEBUG = false
 
 let eventBus = new EventBusClass()
 
