@@ -19,7 +19,8 @@ class NaiveBayesian {
     this.probability = {};
 
     this.MINIMUM_REQUIRED_SAMPLES = 3;
-    this.PROBABILITY_MINIMUM = 1e-4;
+    this.PROBABILITY_MINIMUM = 1e-9;
+    this.MINIMUM_RSSI = -60;
   }
 
   config() {
@@ -82,7 +83,7 @@ class NaiveBayesian {
         }
       });
 
-      // require at least 2 samples in a fingerprint
+      // require at least this.MINIMUM_REQUIRED_SAMPLES samples in a fingerprint
       if (sampleCount >= this.MINIMUM_REQUIRED_SAMPLES) {
         probability = Math.pow(probability, 1 / sampleCount);
       }
@@ -117,7 +118,7 @@ class NaiveBayesian {
   }
 
 
-  _processValue(rssi) {
+  _processValue(rssi, applyMin = true) {
     if (this.mode === 'distance') {
       if (Array.isArray(rssi)) {
         let result = [];
@@ -129,7 +130,7 @@ class NaiveBayesian {
 
       return getDistanceFromRssi(rssi)
     }
-    if (this.mode === 'log') {
+    else if (this.mode === 'log') {
       if (Array.isArray(rssi)) {
         let result = [];
         for (let i = 0; i < rssi.length; i++) {
@@ -139,7 +140,19 @@ class NaiveBayesian {
       }
       return Math.pow(10,(rssi - 55)/(-10 * 2))
     }
-    return rssi;
+    else if (applyMin) {
+      if (Array.isArray(rssi)) {
+        let result = [];
+        for (let i = 0; i < rssi.length; i++) {
+          result.push(Math.min(this.MINIMUM_RSSI, rssi[i]));
+        }
+        return result;
+      }
+      return Math.min(this.MINIMUM_RSSI, rssi);
+    }
+    else {
+      return rssi;
+    }
   }
 
   drawCustomElement(x,y, options) {

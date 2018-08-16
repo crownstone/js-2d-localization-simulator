@@ -60,13 +60,41 @@ function loadFromFile(path, success, error) {
 
 
 
-function precalculateWallAbsorptionMap() {
-  console.time("precalculateWallAbsorptionMap")
+function precalculateWallAbsorptionMapMeter() {
+  console.time("precalculateWallAbsorptionMapMeter")
   // we need to set the WALL_RSSI_DROP_PER_DM to something other than 0, else we dont get a map.
   let tmp = WALL_RSSI_DROP_PER_DM;
+  let tmp2 = CALCULATE_RSSI_DROP_PER_DISTANCE;
+  CALCULATE_RSSI_DROP_PER_DISTANCE = true;
   WALL_RSSI_DROP_PER_DM = -5;
   precalcWalls();
-  resetWallAbsorptionMap()
+  WALL_ABSORPTION_MAP_METER = resetWallAbsorptionMap()
+  _runPrecalc();
+  WALL_RSSI_DROP_PER_DM = tmp;
+  CALCULATE_RSSI_DROP_PER_DISTANCE = tmp2;
+  // console.log("WALL_ABSORPTION_MAP", WALL_ABSORPTION_MAP)
+  alert("Finished precalculating wall absorption distance map!")
+  console.timeEnd("precalculateWallAbsorptionMapMeter")
+}
+
+
+function precalculateWallAbsorptionMapCount() {
+  console.time("precalculateWallAbsorptionMapCount")
+  // we need to set the WALL_RSSI_DROP_PER_DM to something other than 0, else we dont get a map.
+  let tmp = WALL_RSSI_DROP_PER_WALL;
+  let tmp2 = CALCULATE_RSSI_DROP_PER_DISTANCE;
+  CALCULATE_RSSI_DROP_PER_DISTANCE = false;
+  WALL_RSSI_DROP_PER_WALL = -5;
+  WALL_ABSORPTION_MAP_COUNT = resetWallAbsorptionMap()
+  _runPrecalc();
+  WALL_RSSI_DROP_PER_WALL = tmp;
+  CALCULATE_RSSI_DROP_PER_DISTANCE = tmp2;
+  // console.log("WALL_ABSORPTION_MAP", WALL_ABSORPTION_MAP)
+  alert("Finished precalculating wall absorption count map!")
+  console.timeEnd("precalculateWallAbsorptionMapCount")
+}
+
+function _runPrecalc() {
   let xblockCount = Math.ceil(canvas.width / BLOCK_SIZE);
   let yblockCount = Math.ceil(canvas.height / BLOCK_SIZE);
   for (let i = 0; i < xblockCount; i++) {
@@ -79,10 +107,6 @@ function precalculateWallAbsorptionMap() {
       getRssiFromStonesToPoint(x,y, true);
     }
   }
-  WALL_RSSI_DROP_PER_DM = tmp;
-  // console.log("WALL_ABSORPTION_MAP", WALL_ABSORPTION_MAP)
-  alert("Finished precalculating wall absorption map!")
-  console.timeEnd("precalculateWallAbsorptionMap")
 }
 
 function showRoomGroundTruth() {

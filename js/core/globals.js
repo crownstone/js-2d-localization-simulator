@@ -12,12 +12,15 @@
     let PADDING_IN_METERS = 0;
 
     let WALL_RSSI_DROP_PER_DM = -5;  // db
+    let WALL_RSSI_DROP_PER_WALL = -5;  // db
     let WALL_THICKNESS_CM = 0;
     let DRAW_CUSTOM_ELEMENTS = false;
+    let CALCULATE_RSSI_DROP_PER_DISTANCE = true;
 /** CHANGE THESE VALUES IN CONFIG.JSON **/
 // ------------------------------------ //
 
-let WALL_ABSORPTION_MAP = {};
+let WALL_ABSORPTION_MAP_METER = {};
+let WALL_ABSORPTION_MAP_COUNT = {};
 
 let OPERATION_MODE = 'DRAW_ROOMS';
 let GRAPH3D = null;

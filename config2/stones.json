@@ -1,0 +1,74 @@
+[
+  {
+    "id": "crownstone-1",
+    "position": {
+      "x": 2.5,
+      "y": 0
+    },
+    "angle": 0,
+    "color": "#ff8400"
+  },
+  {
+    "id": "crownstone-2",
+    "position": {
+      "x": 10,
+      "y": 1.5
+    },
+    "angle": 90,
+    "color": "#ffa94d"
+  },
+  {
+    "id": "crownstone-3",
+    "position": {
+      "x": 15,
+      "y": 10.75
+    },
+    "angle": 0,
+    "color": "#00263e"
+  },
+  {
+    "id": "crownstone-4",
+    "position": {
+      "x": 4.5,
+      "y": 7.5
+    },
+    "angle": 135,
+    "color": "#8a01ff"
+  },
+  {
+    "id": "crownstone-5",
+    "position": {
+      "x": 13.75,
+      "y": 3.25
+    },
+    "angle": 0,
+    "color": "#5801a9"
+  },
+  {
+    "id": "crownstone-6",
+    "position": {
+      "x": 0.25,
+      "y": 4.75
+    },
+    "angle": 90,
+    "color": "#0075c9"
+  },
+  {
+    "id": "crownstone-7",
+    "position": {
+      "x": 9.75,
+      "y": 4.25
+    },
+    "angle": 270,
+    "color": "#2698e9"
+  },
+  {
+    "id": "crownstone-8",
+    "position": {
+      "x": 4.75,
+      "y": 10.75
+    },
+    "angle": 0,
+    "color": "#a0eb58"
+  }
+]

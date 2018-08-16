@@ -24,10 +24,10 @@ function initRSSItoCrownstonesHandler() {
         break;
       }
     }
-    console.log("HERE")
     let position = CROWNSTONES[selectedStoneIndex].position;
     let posInPx = metersToPixels(position.x, position.y);
-    console.log(checkIntersections(point.x, point.y, posInPx.x, posInPx.y))
+    console.log(checkIntersectionsInMeters(point.x, point.y, posInPx.x, posInPx.y))
+    console.log(checkIntersectionCount(point.x, point.y, posInPx.x, posInPx.y))
 
 
     if (changed) {

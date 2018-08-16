@@ -168,37 +168,87 @@ function getRssiFromStoneToPoint(stone, x, y, ignoreThreshold = false) {
   let rssi = getRSSI(distance);
 
   if (rssi > RSSI_THRESHOLD || ignoreThreshold === true) {
+    if (CALCULATE_RSSI_DROP_PER_DISTANCE === true) {
+      rssi = applyRssiWallMeters(rssi, stone, x, y);;
+    }
+    else if (CALCULATE_RSSI_DROP_PER_DISTANCE === 'combined') {
+      let rssiMeters = applyRssiWallMeters(rssi, stone, x, y);;
+      let rssiCount = applyRssiWallCount(rssi, stone, x, y);;
 
-    if (WALL_RSSI_DROP_PER_DM !== 0) {
-      let intersectionMeters = 0;
-      let targetPosInPixels = metersToPixels(x, y)
-      if (
-        WALL_ABSORPTION_MAP[stone.id] &&
-        WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x] &&
-        WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x][targetPosInPixels.y] !== undefined ) {
-        intersectionMeters = WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x][targetPosInPixels.y];
-      }
-      else {
-        let stonePosInPixels = metersToPixels(stone.position.x, stone.position.y)
-        intersectionMeters = checkIntersections(targetPosInPixels.x, targetPosInPixels.y, stonePosInPixels.x, stonePosInPixels.y);
-
-        if (!WALL_ABSORPTION_MAP[stone.id]) { WALL_ABSORPTION_MAP[stone.id] = {}; }
-        if (!WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x]) { WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x] = {};  }
-        WALL_ABSORPTION_MAP[stone.id][targetPosInPixels.x][targetPosInPixels.y] = intersectionMeters;
-      }
-
-      rssi += WALL_RSSI_DROP_PER_DM * intersectionMeters * 10;
-      // drawTextOnGrid(intersectionMeters, x,y)
-
-      if (rssi > RSSI_THRESHOLD || ignoreThreshold === true) {
-        return rssi;
-      }
-      else {
-        return null;
-      }
+      rssi = 0.5*(rssiCount + rssiMeters);
+    }
+    else {
+      // calc drop per wall count
+      rssi = applyRssiWallCount(rssi, stone, x, y);
     }
 
-    return rssi;
+    if (rssi > RSSI_THRESHOLD || ignoreThreshold === true) {
+      return rssi;
+    }
+    else {
+      return null;
+    }
   }
   return null;
+}
+
+
+function applyRssiWallMeters(rssi, stone, x, y) {
+  if (WALL_RSSI_DROP_PER_DM !== 0) {
+    let intersectionMeters = 0;
+    let targetPosInPixels = metersToPixels(x, y)
+    if (
+      WALL_ABSORPTION_MAP_METER[stone.id] &&
+      WALL_ABSORPTION_MAP_METER[stone.id][targetPosInPixels.x] &&
+      WALL_ABSORPTION_MAP_METER[stone.id][targetPosInPixels.x][targetPosInPixels.y] !== undefined) {
+      intersectionMeters = WALL_ABSORPTION_MAP_METER[stone.id][targetPosInPixels.x][targetPosInPixels.y];
+    }
+    else {
+      let stonePosInPixels = metersToPixels(stone.position.x, stone.position.y)
+      intersectionMeters = checkIntersectionsInMeters(targetPosInPixels.x, targetPosInPixels.y, stonePosInPixels.x, stonePosInPixels.y);
+
+      if (!WALL_ABSORPTION_MAP_METER[stone.id]) {
+        WALL_ABSORPTION_MAP_METER[stone.id] = {};
+      }
+      if (!WALL_ABSORPTION_MAP_METER[stone.id][targetPosInPixels.x]) {
+        WALL_ABSORPTION_MAP_METER[stone.id][targetPosInPixels.x] = {};
+      }
+      WALL_ABSORPTION_MAP_METER[stone.id][targetPosInPixels.x][targetPosInPixels.y] = intersectionMeters;
+    }
+
+    rssi += WALL_RSSI_DROP_PER_DM * intersectionMeters * 10;
+    // drawTextOnGrid(intersectionMeters, x,y)
+  }
+
+  return rssi;
+}
+
+function applyRssiWallCount(rssi, stone, x, y) {
+  if (WALL_RSSI_DROP_PER_WALL !== 0) {
+    let intersectionWallCount = 0;
+    let targetPosInPixels = metersToPixels(x, y)
+    if (
+      WALL_ABSORPTION_MAP_COUNT[stone.id] &&
+      WALL_ABSORPTION_MAP_COUNT[stone.id][targetPosInPixels.x] &&
+      WALL_ABSORPTION_MAP_COUNT[stone.id][targetPosInPixels.x][targetPosInPixels.y] !== undefined) {
+      intersectionWallCount = WALL_ABSORPTION_MAP_COUNT[stone.id][targetPosInPixels.x][targetPosInPixels.y];
+    }
+    else {
+      let stonePosInPixels = metersToPixels(stone.position.x, stone.position.y)
+      intersectionWallCount = checkIntersectionCount(targetPosInPixels.x, targetPosInPixels.y, stonePosInPixels.x, stonePosInPixels.y);
+
+      if (!WALL_ABSORPTION_MAP_COUNT[stone.id]) {
+        WALL_ABSORPTION_MAP_COUNT[stone.id] = {};
+      }
+      if (!WALL_ABSORPTION_MAP_COUNT[stone.id][targetPosInPixels.x]) {
+        WALL_ABSORPTION_MAP_COUNT[stone.id][targetPosInPixels.x] = {};
+      }
+      WALL_ABSORPTION_MAP_COUNT[stone.id][targetPosInPixels.x][targetPosInPixels.y] = intersectionWallCount;
+    }
+
+    rssi += WALL_RSSI_DROP_PER_WALL * intersectionWallCount;
+    // drawTextOnGrid(intersectionMeters, x,y)
+  }
+
+  return rssi;
 }

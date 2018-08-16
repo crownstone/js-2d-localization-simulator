@@ -84,13 +84,19 @@ function precalcWalls() {
 }
 
 
-function checkIntersections(startXpx, startYpy, xPx,yPx) {
+function checkIntersectionsInMeters(startXpx, startYpy, xPx,yPx) {
   if (!ROOMS_PRECALCULATED) {
     precalcWalls()
   }
   return _checkIntersections(startXpx,startYpy,xPx,yPx, ROOMS_WALLS_PRECALC);
 }
 
+function checkIntersectionCount(startXpx, startYpy, xPx,yPx) {
+  if (!ROOMS_PRECALCULATED) {
+    precalcWalls()
+  }
+  return getAmountOfWallIntersections(startXpx,startYpy,xPx,yPx);
+}
 
 /**
  * @param startX
@@ -98,7 +104,7 @@ function checkIntersections(startXpx, startYpy, xPx,yPx) {
  * @param targetX
  * @param targetY
  * @param pairsOfPoints    || array of lines
- * @returns {Array}
+ * @returns {number}
  */
 function _checkIntersections(startX, startY, targetX, targetY, walls) {
   // let intersectionPoints = [];
@@ -211,21 +217,14 @@ function _checkIntersections(startX, startY, targetX, targetY, walls) {
 
 
 
-function multicast(startX, startY, targetX, targetY, room, highAccuracy = false) {
+function multicast(startX, startY, targetX, targetY, room) {
   let intersectionPoints = [];
   if (!room.corners)           { return intersectionPoints; }
   if (room.corners.length < 3) { return intersectionPoints; }
 
 
-  let padding = 0.4*BLOCK_SIZE;
-  let stepSize = 1.8*padding;
-  if (highAccuracy) {
-    padding = 4
-    stepSize = 0.5
-  }
-
-  padding = 10
-  stepSize = 8
+  let padding = 0.4*BLOCK_SIZE
+  let stepSize = 8
 
   let dx = targetX - startX;
   let dy = targetY - startY;
@@ -345,7 +344,7 @@ function getAmountOfWallIntersections(fromX, fromY, toX, toY) {
   let intersections = [];
   let intersectionMap = {};
   for (let i = 0; i < roomIds.length; i++) {
-    let roomIntersections = castRay(fromX, fromY, toX, toY, ROOMS[roomIds[i]]);
+    let roomIntersections = multicast(fromX, fromY, toX, toY, ROOMS[roomIds[i]]);
     for (let j = 0; j < roomIntersections.length; j++) {}
     roomIntersections.forEach((intersection) => {
       let intersectionId = 'x:' + Math.round(intersection[0]) + ',y:' + Math.round(intersection[1]);
