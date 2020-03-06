@@ -57,6 +57,9 @@
     <button onclick="precalculateWallAbsorptionMapCount()" type="button">Precalculate wall absorption count map</button>
     <button onclick="download(WALL_ABSORPTION_MAP_COUNT, 'wallAbsorptionMapCount.json')" type="button">Download wall absorption count map</button>
     <button onclick="resetWallAbsorptionMap(WALL_ABSORPTION_MAP_COUNT); alert('Done');" type="button">Clear wall absorption count map</button>
+    <button onclick="downloadTrainingData()" type="button">Download Training Data</button>
+    <button onclick="downloadTestData()" type="button">Download Test Data</button>
+    <button onclick="showExternalResult('./external_data_visualization/','result.json')" type="button">Show External Result</button>
 </div>
 <div id="attenuationControl" style="display:none">
     Attenuation: <input type="range" id="attenuationRange" onchange="changeAttenuation()" min="0" max="20" value="0" step="1" style="width:300px" />[<span id="attenuationValue"></span>]

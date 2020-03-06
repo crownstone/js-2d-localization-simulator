@@ -59,6 +59,8 @@ class NaiveBayesian {
         this.fingerprints[roomId][stoneId] = {mean: mean, std: std};
       })
     })
+
+    // ATTENUATION = 3
   }
 
   classify(inputVector) {

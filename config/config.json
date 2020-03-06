@@ -7,13 +7,13 @@
   },
   "system": {
     "calibrationValueAt1Meter": -55,
-    "nValue": 3.5,
-    "rssiThreshold": -98,
+    "nValue": 3,
+    "rssiThreshold": -198,
     "attenuation": 10,
     "attenuationFactor": 0.75,
-    "calculateRssiDropPerDistance": true,
-    "wallRssiDropPerDm": -4,
-    "wallRssiDropPerWall": -4,
+    "calculateRssiDropPerDistance": false,
+    "wallRssiDropPerDm": 0,
+    "wallRssiDropPerWall": -5,
     "wallThicknessCm": 10
   },
   "gui": {

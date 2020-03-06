@@ -26,8 +26,8 @@ function initRSSItoCrownstonesHandler() {
     }
     let position = CROWNSTONES[selectedStoneIndex].position;
     let posInPx = metersToPixels(position.x, position.y);
-    console.log(checkIntersectionsInMeters(point.x, point.y, posInPx.x, posInPx.y))
-    console.log(checkIntersectionCount(point.x, point.y, posInPx.x, posInPx.y))
+    // console.log(checkIntersectionsInMeters(point.x, point.y, posInPx.x, posInPx.y))
+    // console.log(checkIntersectionCount(point.x, point.y, posInPx.x, posInPx.y))
 
 
     if (changed) {
@@ -41,8 +41,8 @@ function initRSSItoCrownstonesHandler() {
           selectedCrownstone = stone;
         }
       })
-      console.log("Clicked @ x,y in meters:", x, y);
-      console.log("Rssi to selected crownstone at that point:", getRssiFromStoneToPoint(selectedCrownstone, x, y, true));
+      // console.log("Clicked @ x,y in meters:", x, y);
+      // console.log("Rssi to selected crownstone at that point:", getRssiFromStoneToPoint(selectedCrownstone, x, y, true));
     }
   }))
 }

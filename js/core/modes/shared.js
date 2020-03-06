@@ -245,7 +245,6 @@ function applyRssiWallCount(rssi, stone, x, y) {
       }
       WALL_ABSORPTION_MAP_COUNT[stone.id][targetPosInPixels.x][targetPosInPixels.y] = intersectionWallCount;
     }
-
     rssi += WALL_RSSI_DROP_PER_WALL * intersectionWallCount;
     // drawTextOnGrid(intersectionMeters, x,y)
   }

@@ -141,6 +141,93 @@ function download(data, fileName) {
 };
 
 
+function downloadTrainingData() {
+  // load config into classifiers
+  let params = {};
+  params.crownstone_count = CROWNSTONES.length;
+
+  // create fingerprint sets
+  let fingerprintSet = {};
+  let roomKeys = Object.keys(TRAINING_LOCATIONS);
+  roomKeys.forEach((roomId) => {
+    fingerprintSet[roomId] = [];
+
+    let trainingPoints = TRAINING_LOCATIONS[roomId];
+    for (let i = 0; i < trainingPoints.length; i++) {
+      let point = trainingPoints[i];
+      let sampleVector = getRssiFromStonesToPoint(point.x, point.y);
+      fingerprintSet[roomId].push({timestamp:i, data:sampleVector});
+    }
+  })
+
+  download(fingerprintSet, 'trainingSet.json');
+}
+
+function downloadTestData() {
+  let xblockCount = Math.ceil(canvas.width / BLOCK_SIZE);
+  let yblockCount = Math.ceil(canvas.height / BLOCK_SIZE);
+  let data = [];
+  for (let i = 0; i < xblockCount; i++) {
+    for (let j = 0; j < yblockCount; j++) {
+      let xPx = 0.5*BLOCK_SIZE + i*BLOCK_SIZE;
+      let yPx = 0.5*BLOCK_SIZE + j*BLOCK_SIZE;
+
+      let {x , y} = pixelsToMeters(xPx, yPx, false);
+
+      let vector = getRssiFromStonesToPoint(x,y);
+      data.push({x:i, y:j, vector:vector, label: null})
+    }
+  }
+
+  download(data, 'testSet.json');
+}
+
+function showExternalResult(path, filename) {
+  getFile(path + '/' + filename)
+    .then((data) => {
+      let externalData = JSON.parse(data);
+      let resultMap = {};
+      for (let i = 0; i < externalData.length; i++) {
+        let point = externalData[i];
+        if (!resultMap[point.x]) { resultMap[point.x] = {}; }
+
+        resultMap[point.x][point.y] = point.label;
+      }
+
+      let xblockCount = Math.ceil(canvas.width / BLOCK_SIZE);
+      let yblockCount = Math.ceil(canvas.height / BLOCK_SIZE);
+      for (let i = 0; i < xblockCount; i++) {
+        for (let j = 0; j < yblockCount; j++) {
+          let xPx = 0.5*BLOCK_SIZE + i*BLOCK_SIZE;
+          let yPx = 0.5*BLOCK_SIZE + j*BLOCK_SIZE;
+
+          let {x , y} = pixelsToMeters(xPx, yPx, false);
+
+          let maxId = resultMap[i][j]
+
+          if (maxId === "NO_ROOM" || maxId === null) {
+            drawSquareOnGrid(x,y, BLOCK_SIZE, 'rgba(0,0,0,0.2)')
+          }
+          else {
+            if (!ROOMS[maxId]) {
+              console.warn("UNKNOWN ROOM", maxId)
+              drawSquareOnGrid(x, y, BLOCK_SIZE, 'rgba(255,0,0,1)')
+            }
+            else {
+              if (!ROOMS[maxId].color) {
+                console.warn("NO COLOR DEFINED FOR ROOM", maxId)
+                drawSquareOnGrid(x, y, BLOCK_SIZE, 'rgba(255,255,0,1)')
+              }
+              else {
+                drawSquareOnGrid(x, y, BLOCK_SIZE, hex2rgba(ROOMS[maxId].color,0.5))
+              }
+            }
+          }
+        }
+      }
+    }).catch((err) => { console.warn('Error in getting external data:', err) })
+}
+
 CanvasRenderingContext2D.prototype.circle = function (x, y, r) {
   this.beginPath();
   this.arc(x, y, r, 0, 2 * Math.PI, false);
