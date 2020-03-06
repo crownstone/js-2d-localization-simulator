@@ -174,8 +174,10 @@ function downloadTestData() {
 
       let {x , y} = pixelsToMeters(xPx, yPx, false);
 
+
+      let room = getRoomInClick(xPx, yPx);
       let vector = getRssiFromStonesToPoint(x,y);
-      data.push({x:i, y:j, vector:vector, label: null})
+      data.push({x:i, y:j, vector:vector, label: null, groundTruth: room})
     }
   }
 
