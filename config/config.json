@@ -8,7 +8,7 @@
   "system": {
     "calibrationValueAt1Meter": -55,
     "nValue": 3,
-    "rssiThreshold": -198,
+    "rssiThreshold": -90,
     "attenuation": 10,
     "attenuationFactor": 0.75,
     "calculateRssiDropPerDistance": false,

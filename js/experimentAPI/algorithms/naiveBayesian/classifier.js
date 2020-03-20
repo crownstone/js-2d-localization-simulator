@@ -167,7 +167,7 @@ class NaiveBayesian {
       color = "#fff"
     }
 
-    drawTextOnGrid(this.sampleSize[SELECTED_ROOM_ID], x, y, 0, 0, 8, 'center', color);
+    // drawTextOnGrid(this.sampleSize[SELECTED_ROOM_ID], x, y, 0, 0, 8, 'center', color);
   }
 
 
